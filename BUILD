@@ -5,6 +5,7 @@ package(default_visibility = ["//visibility:public"])
 java_library(
     name = "refract",
     srcs = glob(["src/main/java/com/github/nprindle/refract/**/*.java"]),
+    javacopts = ["-Xlint:unchecked"],
     # deps = ["@maven//:com_google_guava_guava"],
 )
 

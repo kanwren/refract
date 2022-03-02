@@ -29,13 +29,13 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B> {
 
     public static final class Instances {
         public static <C> Functor<Const.Mu<C>> functor() {
-            return new Const.Instances.FunctorI();
+            return new Const.Instances.FunctorI<>();
         }
 
         private static class FunctorI<C> implements Functor<Const.Mu<C>> {
             @Override
             public <A, B> A1<Const.Mu<C>, B> map(final Function<? super A, ? extends B> f, final A1<Const.Mu<C>, A> x) {
-                return new Const(Const.get(x));
+                return new Const<>(Const.get(x));
             }
         }
     }

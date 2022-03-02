@@ -43,17 +43,17 @@ public final class Identity<A> implements A1<Identity.M, A> {
 
             @Override
             public <A, B> A1<Identity.M, B> map(final Function<? super A, ? extends B> f, final A1<Identity.M, A> x) {
-                return new Identity(f.apply(Identity.get(x)));
+                return new Identity<>(f.apply(Identity.get(x)));
             }
 
             @Override
             public <A> A1<Identity.M, A> pure(final A x) {
-                return new Identity(x);
+                return new Identity<>(x);
             }
 
             @Override
             public <A, B> A1<Identity.M, B> ap(final A1<Identity.M, Function<? super A, ? extends B>> f, final A1<Identity.M, A> x) {
-                return new Identity(Identity.get(f).apply(Identity.get(x)));
+                return new Identity<>(Identity.get(f).apply(Identity.get(x)));
             }
         }
     }

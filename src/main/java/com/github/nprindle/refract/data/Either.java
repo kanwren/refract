@@ -66,12 +66,12 @@ public abstract class Either<A, B> implements A1<Either.Mu1<A>, B>, A2<Either.Mu
 
         @Override
         public <C> Either<C, B> mapLeft(Function<? super A, ? extends C> f) {
-            return new Left(f.apply(this.value));
+            return new Left<>(f.apply(this.value));
         }
 
         @Override
         public <C> Either<A, C> mapRight(Function<? super B, ? extends C> f) {
-            return new Left(this.value);
+            return new Left<>(this.value);
         }
 
         @Override
@@ -81,7 +81,7 @@ public abstract class Either<A, B> implements A1<Either.Mu1<A>, B>, A2<Either.Mu
 
         @Override
         public <C> Either<A, C> flatMap(Function<? super B, ? extends Either<A, C>> k) {
-            return new Left(this.value);
+            return new Left<>(this.value);
         }
     }
 
@@ -116,12 +116,12 @@ public abstract class Either<A, B> implements A1<Either.Mu1<A>, B>, A2<Either.Mu
 
         @Override
         public <C> Either<C, B> mapLeft(Function<? super A, ? extends C> f) {
-            return new Right(this.value);
+            return new Right<>(this.value);
         }
 
         @Override
         public <C> Either<A, C> mapRight(Function<? super B, ? extends C> f) {
-            return new Right(f.apply(this.value));
+            return new Right<>(f.apply(this.value));
         }
 
         @Override
@@ -137,11 +137,11 @@ public abstract class Either<A, B> implements A1<Either.Mu1<A>, B>, A2<Either.Mu
 
     public static final class Instances {
         public static <A> Functor<Either.Mu1<A>> functor() {
-            return new Either.Instances.ApplicativeI();
+            return new Either.Instances.ApplicativeI<>();
         }
 
         public static <A> Applicative<Either.Mu1<A>> applicative() {
-            return new Either.Instances.ApplicativeI();
+            return new Either.Instances.ApplicativeI<>();
         }
 
         private static final class ApplicativeI<K> implements Applicative<Either.Mu1<K>>, Functor<Either.Mu1<K>> {
@@ -152,7 +152,7 @@ public abstract class Either<A, B> implements A1<Either.Mu1<A>, B>, A2<Either.Mu
 
             @Override
             public <A> A1<Either.Mu1<K>, A> pure(final A x) {
-                return new Either.Right(x);
+                return new Either.Right<>(x);
             }
 
             @Override
@@ -160,5 +160,17 @@ public abstract class Either<A, B> implements A1<Either.Mu1<A>, B>, A2<Either.Mu
                 return Either.unbox(f).flatMap(g -> Either.unbox(x).mapRight(y -> g.apply(y)));
             }
         }
+    }
+
+    public Either<B, A> swap() {
+        return this.either(Either::right, Either::left);
+    }
+
+    public static <A, B> Either<A, B> left(A value) {
+        return new Either.Left<>(value);
+    }
+
+    public static <A, B> Either<A, B> right(B value) {
+        return new Either.Right<>(value);
     }
 }
