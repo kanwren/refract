@@ -13,8 +13,11 @@
     {
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [
-          openjdk17_headless
+          openjdk11
+
+          # bazel
           bazel_5
+          python3
         ];
       };
     });
