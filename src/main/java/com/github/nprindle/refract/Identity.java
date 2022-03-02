@@ -5,6 +5,7 @@ import java.util.function.Function;
 public final class Identity<A> implements A1<Identity.M, A> {
     public static final class M implements K1 {}
 
+    // TODO: should this be any subtype of Identity.M?
     public static <A> Identity<A> unbox(final A1<Identity.M, A> p) {
         return (Identity<A>) p;
     }
