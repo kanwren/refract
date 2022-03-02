@@ -10,7 +10,7 @@ public class TestMain {
 
         int a = i.value();
 
-        Identity<Integer> res = Identity.unbox(Identity.Instances.functor.map(n -> n + 1, i));
+        Identity<Integer> res = Identity.unbox(Identity.Instances.functor().map(n -> n + 1, i));
 
         int b = res.value();
 
@@ -25,7 +25,7 @@ public class TestMain {
         Identity<Integer> ia = new Identity<>(a);
         Identity<Integer> ib = new Identity<>(b);
 
-        Identity<Integer> res = Identity.unbox(Identity.Instances.applicative.apply2((x, y) -> x + y, ia, ib));
+        Identity<Integer> res = Identity.unbox(Identity.Instances.applicative().apply2((x, y) -> x + y, ia, ib));
 
         int c = res.value();
 

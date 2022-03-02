@@ -24,8 +24,13 @@ public final class Identity<A> implements A1<Identity.M, A> {
     }
 
     public static final class Instances {
-        public static final Functor<Identity.M> functor = Identity.Instances.ApplicativeI.INSTANCE;
-        public static final Applicative<Identity.M> applicative = Identity.Instances.ApplicativeI.INSTANCE;
+        public static final Functor<Identity.M> functor() {
+            return Identity.Instances.ApplicativeI.INSTANCE;
+        }
+
+        public static final Applicative<Identity.M> applicative() {
+            return Identity.Instances.ApplicativeI.INSTANCE;
+        }
 
         private static enum ApplicativeI implements Applicative<Identity.M>, Functor<Identity.M> {
             INSTANCE;
