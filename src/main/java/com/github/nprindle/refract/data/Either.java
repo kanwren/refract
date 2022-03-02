@@ -11,14 +11,14 @@ import java.util.function.Function;
 import java.util.function.Consumer;
 import java.util.Optional;
 
-public abstract class Either<A, B> implements A1<Either.M1<A>, B>, A2<Either.M2, A, B> {
-    public static final class M1<A> implements K1 {}
-    public static final <A, B> Either<A, B> unbox(final A1<M1<A>, B> p) {
+public abstract class Either<A, B> implements A1<Either.Mu1<A>, B>, A2<Either.Mu2, A, B> {
+    public static final class Mu1<A> implements K1 {}
+    public static final <A, B> Either<A, B> unbox(final A1<Mu1<A>, B> p) {
         return (Either<A, B>) p;
     }
 
-    public static final class M2 implements K2 {}
-    public static final <A, B> Either<A, B> unbox2(final A2<M2, A, B> p) {
+    public static final class Mu2 implements K2 {}
+    public static final <A, B> Either<A, B> unbox2(final A2<Mu2, A, B> p) {
         return (Either<A, B>) p;
     }
 
@@ -136,27 +136,27 @@ public abstract class Either<A, B> implements A1<Either.M1<A>, B>, A2<Either.M2,
     }
 
     public static final class Instances {
-        public static <A> Functor<Either.M1<A>> functor() {
+        public static <A> Functor<Either.Mu1<A>> functor() {
             return new Either.Instances.ApplicativeI();
         }
 
-        public static <A> Applicative<Either.M1<A>> applicative() {
+        public static <A> Applicative<Either.Mu1<A>> applicative() {
             return new Either.Instances.ApplicativeI();
         }
 
-        private static final class ApplicativeI<K> implements Applicative<Either.M1<K>>, Functor<Either.M1<K>> {
+        private static final class ApplicativeI<K> implements Applicative<Either.Mu1<K>>, Functor<Either.Mu1<K>> {
             @Override
-            public <A, B> A1<Either.M1<K>, B> map(final Function<? super A, ? extends B> f, final A1<Either.M1<K>, A> x) {
+            public <A, B> A1<Either.Mu1<K>, B> map(final Function<? super A, ? extends B> f, final A1<Either.Mu1<K>, A> x) {
                 return Either.unbox(x).mapRight(f);
             }
 
             @Override
-            public <A> A1<Either.M1<K>, A> pure(final A x) {
+            public <A> A1<Either.Mu1<K>, A> pure(final A x) {
                 return new Either.Right(x);
             }
 
             @Override
-            public <A, B> A1<Either.M1<K>, B> ap(final A1<Either.M1<K>, Function<? super A, ? extends B>> f, final A1<Either.M1<K>, A> x) {
+            public <A, B> A1<Either.Mu1<K>, B> ap(final A1<Either.Mu1<K>, Function<? super A, ? extends B>> f, final A1<Either.Mu1<K>, A> x) {
                 return Either.unbox(f).flatMap(g -> Either.unbox(x).mapRight(y -> g.apply(y)));
             }
         }
