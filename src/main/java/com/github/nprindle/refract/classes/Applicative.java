@@ -1,4 +1,7 @@
-package com.github.nprindle.refract;
+package com.github.nprindle.refract.classes;
+
+import com.github.nprindle.refract.d17n.A1;
+import com.github.nprindle.refract.d17n.K1;
 
 import java.util.function.Function;
 import java.util.function.BiFunction;

@@ -1,4 +1,4 @@
-package com.github.nprindle.refract;
+package com.github.nprindle.refract.d17n;
 
 /**
  * Apply an HKT <code>F</code> of two arguments to types <code>A</code> and

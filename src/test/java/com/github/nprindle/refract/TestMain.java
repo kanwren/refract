@@ -1,5 +1,7 @@
 package com.github.nprindle.refract;
 
+import com.github.nprindle.refract.data.Identity;
+
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 

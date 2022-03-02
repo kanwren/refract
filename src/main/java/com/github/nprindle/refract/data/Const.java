@@ -1,4 +1,8 @@
-package com.github.nprindle.refract;
+package com.github.nprindle.refract.data;
+
+import com.github.nprindle.refract.d17n.A1;
+import com.github.nprindle.refract.d17n.K1;
+import com.github.nprindle.refract.classes.Functor;
 
 import java.util.function.Function;
 

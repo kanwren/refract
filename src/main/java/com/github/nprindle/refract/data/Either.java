@@ -1,4 +1,11 @@
-package com.github.nprindle.refract;
+package com.github.nprindle.refract.data;
+
+import com.github.nprindle.refract.d17n.A1;
+import com.github.nprindle.refract.d17n.A2;
+import com.github.nprindle.refract.d17n.K1;
+import com.github.nprindle.refract.d17n.K2;
+import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Applicative;
 
 import java.util.function.Function;
 import java.util.function.Consumer;

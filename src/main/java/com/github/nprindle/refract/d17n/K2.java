@@ -1,5 +1,4 @@
-
-package com.github.nprindle.refract;
+package com.github.nprindle.refract.d17n;
 
 /**
  * A two-argument HKT
