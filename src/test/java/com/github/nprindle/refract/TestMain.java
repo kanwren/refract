@@ -5,8 +5,15 @@ import org.junit.Test;
 
 public class TestMain {
     @Test
-    public void testCompare() throws Exception {
-        assertEquals("trivial", 0, 0);
-        return;
+    public void testIdentityFunctorInstance() throws Exception {
+        Identity<Integer> i = new Identity<>(5);
+
+        int a = i.value();
+
+        Identity<Integer> res = Identity.unbox(Identity.FunctorI.INSTANCE.map(n -> n + 1, i));
+
+        int b = res.value();
+
+        assertEquals("map produces the correct value", b, a + 1);
     }
 }
