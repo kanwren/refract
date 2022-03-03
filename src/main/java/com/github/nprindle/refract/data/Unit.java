@@ -3,6 +3,9 @@ package com.github.nprindle.refract.data;
 import com.github.nprindle.refract.classes.Semigroup;
 import com.github.nprindle.refract.classes.Monoid;
 
+/**
+ * The unit type, with only one inhabitant (modulo nulls in Java).
+ */
 public enum Unit {
     UNIT;
 

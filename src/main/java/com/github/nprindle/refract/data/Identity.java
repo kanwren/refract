@@ -7,10 +7,13 @@ import com.github.nprindle.refract.classes.Applicative;
 
 import java.util.function.Function;
 
+/**
+ * The identity functor, which is isomorphic to the underlying type (modulo
+ * subtyping in Java)
+ */
 public final class Identity<A> implements A1<Identity.M, A> {
     public static final class M implements K1 {}
 
-    // TODO: should this be any subtype of Identity.M?
     public static <A> Identity<A> unbox(final A1<Identity.M, A> p) {
         return (Identity<A>) p;
     }
@@ -25,6 +28,9 @@ public final class Identity<A> implements A1<Identity.M, A> {
         return this.value;
     }
 
+    /**
+     * Extract the value from a fully-applied defunctionalization symbol.
+     */
     public static <A> A get(final A1<Identity.M, A> p) {
         return Identity.unbox(p).value();
     }
