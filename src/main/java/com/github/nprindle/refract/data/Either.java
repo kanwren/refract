@@ -37,7 +37,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
     public abstract <C> Either<A, C> flatMap(final Function<? super B, ? extends Either<A, C>> k);
     public abstract <C> C either(final Function<? super A, ? extends C> onLeft, final Function<? super B, ? extends C> onRight);
 
-    public static class Left<A, B> extends Either<A, B> {
+    public static final class Left<A, B> extends Either<A, B> {
         private final A value;
 
         public Left(A value) {
@@ -92,7 +92,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
         }
     }
 
-    public static class Right<A, B> extends Either<A, B> {
+    public static final class Right<A, B> extends Either<A, B> {
         private final B value;
 
         public Right(B value) {
