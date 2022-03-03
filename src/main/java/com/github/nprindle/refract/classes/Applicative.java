@@ -5,19 +5,11 @@ import com.github.nprindle.refract.d17n.K1;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-/** Minimal complete definition: <code>pure, ap</code> */
 public interface Applicative<F extends K1> extends Functor<F> {
   <A> A1<F, A> pure(final A x);
 
-  <A, B> A1<F, B> ap(final A1<F, Function<? super A, ? extends B>> f, final A1<F, A> x);
   // TODO: allow defining lift2 instead of ap
-  // <pre>
-  // {
-  //   final BiFunction<A1<F, Function<? super A, ? extends B>>, A1<F, A>, A1<F, B>> lifted =
-  //     lift2((f2, x2) -> f2.apply(x2));
-  //   return lifted.apply(f, x);
-  // }
-  // </pre>
+  <A, B> A1<F, B> ap(final A1<F, Function<? super A, ? extends B>> f, final A1<F, A> x);
 
   default <A, B, C> BiFunction<A1<F, A>, A1<F, B>, A1<F, C>> lift2(
       final BiFunction<? super A, ? super B, ? extends C> f) {

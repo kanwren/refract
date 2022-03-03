@@ -4,7 +4,7 @@ pre-commit:
     java-formatting:
       files: git diff --staged --name-only
       glob: "*.java"
-      run: google-java-format --set-exit-if-changed {all_files}
+      run: google-java-format --set-exit-if-changed --dry-run {all_files}
     nix-formatting:
       files: git diff --staged --name-only
       glob: "*.nix"
