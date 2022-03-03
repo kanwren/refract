@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  commands:
+    java-formatting:
+      files: git diff --staged --name-only
+      glob: "*.java"
+      run: google-java-format --set-exit-if-changed {all_files}
+    nix-formatting:
+      files: git diff --staged --name-only
+      glob: "*.nix"
+      run: nixpkgs-fmt --check {all_files}

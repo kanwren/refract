@@ -14,6 +14,9 @@
       devShell = pkgs.mkShell {
         buildInputs = with pkgs; [
           openjdk11
+          google-java-format
+          nixpkgs-fmt
+          lefthook
 
           # bazel
           bazel_5
