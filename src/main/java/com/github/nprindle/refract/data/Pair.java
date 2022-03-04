@@ -1,7 +1,9 @@
 package com.github.nprindle.refract.data;
 
+import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bifunctor;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
@@ -83,11 +85,22 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
       return Pair.Instances.BifunctorI.INSTANCE;
     }
 
-    private static final class FunctorI<K> implements Functor<Pair.Mu<K>> {
+    private static final class FunctorI<K> implements Functor<Pair.Mu<K>>, Traversable<Pair.Mu<K>> {
       @Override
       public <A, B> A1<Pair.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Pair.Mu<K>, A> x) {
         return Pair.unbox(x).mapSnd(f);
+      }
+
+      @Override
+      public <F extends K1, A, B> A1<F, A1<Pair.Mu<K>, B>> traverse(
+          final Applicative<F> applicative,
+          final Function<? super A, ? extends A1<F, B>> f,
+          final A1<Pair.Mu<K>, A> x) {
+        final Pair<K, A> p = Pair.unbox(x);
+        final K k = p.fst();
+        final A a = p.snd();
+        return applicative.map(b -> Pair.of(k, b), f.apply(a));
       }
     }
 

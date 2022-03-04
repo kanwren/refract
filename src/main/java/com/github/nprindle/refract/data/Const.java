@@ -1,7 +1,9 @@
 package com.github.nprindle.refract.data;
 
+import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bifunctor;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
@@ -65,11 +67,19 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
       return Const.Instances.BifunctorI.INSTANCE;
     }
 
-    private static class FunctorI<C> implements Functor<Const.Mu<C>> {
+    private static class FunctorI<C> implements Functor<Const.Mu<C>>, Traversable<Const.Mu<C>> {
       @Override
       public <A, B> A1<Const.Mu<C>, B> map(
           final Function<? super A, ? extends B> f, final A1<Const.Mu<C>, A> x) {
         return new Const<>(Const.get(x));
+      }
+
+      @Override
+      public <F extends K1, A, B> A1<F, A1<Const.Mu<C>, B>> traverse(
+          final Applicative<F> applicative,
+          final Function<? super A, ? extends A1<F, B>> f,
+          final A1<Const.Mu<C>, A> x) {
+        return applicative.pure(Const.of(Const.get(x)));
       }
     }
 

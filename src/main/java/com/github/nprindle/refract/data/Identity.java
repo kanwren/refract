@@ -2,6 +2,7 @@ package com.github.nprindle.refract.data;
 
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.K1;
 import java.util.function.Function;
@@ -20,7 +21,7 @@ public final class Identity<A> implements A1<Identity.M, A> {
     this.value = value;
   }
 
-  public static <A> Identity<A> of(A a) {
+  public static <A> Identity<A> of(final A a) {
     return new Identity<>(a);
   }
 
@@ -42,7 +43,12 @@ public final class Identity<A> implements A1<Identity.M, A> {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
-    private static enum ApplicativeI implements Applicative<Identity.M>, Functor<Identity.M> {
+    public static final Traversable<Identity.M> traversable() {
+      return Identity.Instances.ApplicativeI.INSTANCE;
+    }
+
+    private static enum ApplicativeI
+        implements Applicative<Identity.M>, Functor<Identity.M>, Traversable<Identity.M> {
       INSTANCE;
 
       @Override
@@ -60,6 +66,14 @@ public final class Identity<A> implements A1<Identity.M, A> {
       public <A, B> A1<Identity.M, B> ap(
           final A1<Identity.M, Function<? super A, ? extends B>> f, final A1<Identity.M, A> x) {
         return new Identity<>(Identity.get(f).apply(Identity.get(x)));
+      }
+
+      @Override
+      public <F extends K1, A, B> A1<F, A1<Identity.M, B>> traverse(
+          final Applicative<F> applicative,
+          final Function<? super A, ? extends A1<F, B>> f,
+          final A1<Identity.M, A> x) {
+        return applicative.map(Identity::of, f.apply(Identity.get(x)));
       }
     }
   }

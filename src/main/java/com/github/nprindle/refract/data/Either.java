@@ -3,6 +3,7 @@ package com.github.nprindle.refract.data;
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bifunctor;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
@@ -197,7 +198,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
     }
 
     private static final class ApplicativeI<K>
-        implements Applicative<Either.Mu<K>>, Functor<Either.Mu<K>> {
+        implements Applicative<Either.Mu<K>>, Functor<Either.Mu<K>>, Traversable<Either.Mu<K>> {
       @Override
       public <A, B> A1<Either.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Either.Mu<K>, A> x) {
@@ -213,6 +214,16 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
       public <A, B> A1<Either.Mu<K>, B> ap(
           final A1<Either.Mu<K>, Function<? super A, ? extends B>> f, final A1<Either.Mu<K>, A> x) {
         return Either.unbox(f).flatMap(g -> Either.unbox(x).mapRight(y -> g.apply(y)));
+      }
+
+      @Override
+      public <F extends K1, A, B> A1<F, A1<Either.Mu<K>, B>> traverse(
+          final Applicative<F> applicative,
+          final Function<? super A, ? extends A1<F, B>> f,
+          final A1<Either.Mu<K>, A> x) {
+        final Either<K, A> e = Either.unbox(x);
+        return e.either(
+            k -> applicative.pure(Either.left(k)), a -> applicative.map(Either::right, f.apply(a)));
       }
     }
 
