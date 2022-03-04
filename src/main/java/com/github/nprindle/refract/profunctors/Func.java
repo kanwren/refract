@@ -7,14 +7,17 @@ import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Profunctor;
 import com.github.nprindle.refract.classes.Semigroup;
 import com.github.nprindle.refract.classes.Strong;
+import com.github.nprindle.refract.classes.Traversing;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.data.Either;
+import com.github.nprindle.refract.data.Identity;
 import com.github.nprindle.refract.data.Pair;
 import java.util.function.Function;
 
+@FunctionalInterface
 public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.Mu2, A, B> {
   static final class Mu<A> implements K1 {}
 
@@ -30,6 +33,20 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
 
   static <A, B> Func<A, B> from(Function<? super A, ? extends B> f) {
     return f::apply;
+  }
+
+  @Override
+  default <I> Func<I, B> compose(Function<? super I, ? extends A> g) {
+    return i -> apply(g.apply(i));
+  }
+
+  @Override
+  default <C> Func<A, C> andThen(Function<? super B, ? extends C> g) {
+    return a -> g.apply(apply(a));
+  }
+
+  static <A> Func<A, A> identity() {
+    return x -> x;
   }
 
   static final class Instances {
@@ -66,7 +83,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       @Override
       public <A, B> A1<Func.Mu<E>, B> map(
           final Function<? super A, ? extends B> f, final A1<Func.Mu<E>, A> x) {
-        return Func.from(f.compose(Func.unbox(x)));
+        return Func.unbox(x).andThen(f);
       }
 
       @Override
@@ -86,7 +103,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
     }
 
     private static enum ProfunctorI
-        implements Profunctor<Func.Mu2>, Strong<Func.Mu2>, Choice<Func.Mu2> {
+        implements Profunctor<Func.Mu2>, Strong<Func.Mu2>, Choice<Func.Mu2>, Traversing<Func.Mu2> {
       INSTANCE;
 
       @Override
@@ -95,8 +112,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
           final Function<? super B, ? extends D> g,
           final A2<Func.Mu2, A, B> x) {
         // (c -> a) -> (b -> d) -> (a -> b) -> (c -> d)
-        final Func<C, D> r = c -> g.apply(Func.unbox(x).apply(f.apply(c)));
-        return r;
+        return Func.unbox(x).<C>compose(f).andThen(g);
       }
 
       @Override
@@ -124,6 +140,18 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       public <A, B, C> A2<Func.Mu2, Either<C, A>, Either<C, B>> right(final A2<Func.Mu2, A, B> p) {
         // (a -> b) -> (Either c a -> Either c b)
         final Func<Either<C, A>, Either<C, B>> r = eac -> eac.mapRight(Func.unbox(p));
+        return r;
+      }
+
+      @Override
+      public <A, B, S, T> A2<Func.Mu2, S, T> wander(
+          final Wander<S, T, A, B> wander, final A2<Func.Mu2, A, B> p) {
+        final Func<S, T> r =
+            s -> {
+              final Function<A, A1<Identity.Mu, B>> f = Func.unbox(p).andThen(Identity::of);
+              final A1<Identity.Mu, T> t = wander.wander(Identity.Instances.applicative(), f, s);
+              return Identity.get(t);
+            };
         return r;
       }
     }
