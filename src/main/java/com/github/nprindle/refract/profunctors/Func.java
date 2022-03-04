@@ -3,7 +3,9 @@ package com.github.nprindle.refract.profunctors;
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Choice;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Profunctor;
+import com.github.nprindle.refract.classes.Semigroup;
 import com.github.nprindle.refract.classes.Strong;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
@@ -49,6 +51,14 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
 
     public static Choice<Func.Mu2> choice() {
       return ProfunctorI.INSTANCE;
+    }
+
+    public static <A, B> Semigroup<Func<A, B>> semigroup(Semigroup<B> resultSemigroup) {
+      return new SemigroupI<>(resultSemigroup);
+    }
+
+    public static <A, B> Monoid<Func<A, B>> monoid(Monoid<B> resultMonoid) {
+      return new MonoidI<>(resultMonoid);
     }
 
     private static final class ApplicativeI<E>
@@ -114,6 +124,35 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       public <A, B, C> A2<Func.Mu2, Either<C, A>, Either<C, B>> right(final A2<Func.Mu2, A, B> p) {
         // (a -> b) -> (Either c a -> Either c b)
         final Func<Either<C, A>, Either<C, B>> r = eac -> eac.mapRight(Func.unbox(p));
+        return r;
+      }
+    }
+
+    private static class SemigroupI<A, B> implements Semigroup<Func<A, B>> {
+      private final Semigroup<B> resultSemigroup;
+
+      public SemigroupI(final Semigroup<B> resultSemigroup) {
+        this.resultSemigroup = resultSemigroup;
+      }
+
+      @Override
+      public Func<A, B> append(final Func<A, B> f, final Func<A, B> g) {
+        final Func<A, B> r = a -> resultSemigroup.append(f.apply(a), g.apply(a));
+        return r;
+      }
+    }
+
+    private static class MonoidI<A, B> extends SemigroupI<A, B> implements Monoid<Func<A, B>> {
+      private final Monoid<B> resultMonoid;
+
+      public MonoidI(final Monoid<B> resultMonoid) {
+        super(resultMonoid);
+        this.resultMonoid = resultMonoid;
+      }
+
+      @Override
+      public Func<A, B> empty() {
+        final Func<A, B> r = a -> resultMonoid.empty();
         return r;
       }
     }
