@@ -2,7 +2,9 @@ package com.github.nprindle.refract.data;
 
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bifunctor;
+import com.github.nprindle.refract.classes.Foldable;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
@@ -193,12 +195,23 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
       return new Either.Instances.ApplicativeI<>();
     }
 
+    public static <A> Foldable<Either.Mu<A>> foldable() {
+      return new Either.Instances.ApplicativeI<>();
+    }
+
+    public static <A> Traversable<Either.Mu<A>> traversable() {
+      return new Either.Instances.ApplicativeI<>();
+    }
+
     public static <A> Bifunctor<Either.Mu2> bifunctor() {
       return new Either.Instances.BifunctorI<>();
     }
 
     private static final class ApplicativeI<K>
-        implements Applicative<Either.Mu<K>>, Functor<Either.Mu<K>>, Traversable<Either.Mu<K>> {
+        implements Applicative<Either.Mu<K>>,
+            Functor<Either.Mu<K>>,
+            Foldable<Either.Mu<K>>,
+            Traversable<Either.Mu<K>> {
       @Override
       public <A, B> A1<Either.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Either.Mu<K>, A> x) {
@@ -214,6 +227,14 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
       public <A, B> A1<Either.Mu<K>, B> ap(
           final A1<Either.Mu<K>, Function<? super A, ? extends B>> f, final A1<Either.Mu<K>, A> x) {
         return Either.unbox(f).flatMap(g -> Either.unbox(x).mapRight(y -> g.apply(y)));
+      }
+
+      @Override
+      public <M, A> M foldMap(
+          final Monoid<M> monoid,
+          final Function<? super A, ? extends M> f,
+          final A1<Either.Mu<K>, A> x) {
+        return Either.unbox(x).either(e -> monoid.empty(), f);
       }
 
       @Override

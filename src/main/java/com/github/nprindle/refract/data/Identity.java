@@ -1,7 +1,9 @@
 package com.github.nprindle.refract.data;
 
 import com.github.nprindle.refract.classes.Applicative;
+import com.github.nprindle.refract.classes.Foldable;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.K1;
@@ -43,12 +45,18 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
+    public static final Foldable<Identity.Mu> foldable() {
+      return Identity.Instances.ApplicativeI.INSTANCE;
+    }
+
     public static final Traversable<Identity.Mu> traversable() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
     private static enum ApplicativeI
-        implements Applicative<Identity.Mu>, Functor<Identity.Mu>, Traversable<Identity.Mu> {
+        implements
+            Applicative<Identity.Mu>, Functor<Identity.Mu>, Foldable<Identity.Mu>,
+            Traversable<Identity.Mu> {
       INSTANCE;
 
       @Override
@@ -66,6 +74,14 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
       public <A, B> A1<Identity.Mu, B> ap(
           final A1<Identity.Mu, Function<? super A, ? extends B>> f, final A1<Identity.Mu, A> x) {
         return new Identity<>(Identity.get(f).apply(Identity.get(x)));
+      }
+
+      @Override
+      public <M, A> M foldMap(
+          final Monoid<M> monoid,
+          final Function<? super A, ? extends M> f,
+          final A1<Identity.Mu, A> x) {
+        return f.apply(Identity.get(x));
       }
 
       @Override

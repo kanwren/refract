@@ -4,7 +4,9 @@ import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bicontravariant;
 import com.github.nprindle.refract.classes.Cochoice;
 import com.github.nprindle.refract.classes.Contravariant;
+import com.github.nprindle.refract.classes.Foldable;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Profunctor;
 import com.github.nprindle.refract.classes.Strong;
 import com.github.nprindle.refract.classes.Traversable;
@@ -55,11 +57,15 @@ public interface Forget<R, A, B>
       return new Forget.Instances.FunctorI<>();
     }
 
-    public static <R, A> Functor<Forget.Mu<R, A>> contravariant() {
+    public static <R, A> Contravariant<Forget.Mu<R, A>> contravariant() {
       return new Forget.Instances.FunctorI<>();
     }
 
-    public static <R, A> Functor<Forget.Mu<R, A>> traversable() {
+    public static <R, A> Foldable<Forget.Mu<R, A>> foldable() {
+      return new Forget.Instances.FunctorI<>();
+    }
+
+    public static <R, A> Traversable<Forget.Mu<R, A>> traversable() {
       return new Forget.Instances.FunctorI<>();
     }
 
@@ -82,6 +88,7 @@ public interface Forget<R, A, B>
     private static class FunctorI<R, K>
         implements Functor<Forget.Mu<R, K>>,
             Contravariant<Forget.Mu<R, K>>,
+            Foldable<Forget.Mu<R, K>>,
             Traversable<Forget.Mu<R, K>> {
       @Override
       public <A, B> A1<Forget.Mu<R, K>, B> map(
@@ -95,6 +102,14 @@ public interface Forget<R, A, B>
           final Function<? extends B, ? super A> f, final A1<Forget.Mu<R, K>, A> x) {
         final Forget<R, K, B> r = Forget.unbox(x)::apply;
         return r;
+      }
+
+      @Override
+      public <M, A> M foldMap(
+          final Monoid<M> monoid,
+          final Function<? super A, ? extends M> f,
+          final A1<Forget.Mu<R, K>, A> x) {
+        return monoid.empty();
       }
 
       @Override

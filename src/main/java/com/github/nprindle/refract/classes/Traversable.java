@@ -4,7 +4,7 @@ import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.K1;
 import java.util.function.Function;
 
-public interface Traversable<T extends K1> extends Functor<T> {
+public interface Traversable<T extends K1> extends Functor<T>, Foldable<T> {
   <F extends K1, A, B> A1<F, A1<T, B>> traverse(
       final Applicative<F> applicative,
       final Function<? super A, ? extends A1<F, B>> f,

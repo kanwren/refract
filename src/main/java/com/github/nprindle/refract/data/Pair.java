@@ -2,7 +2,9 @@ package com.github.nprindle.refract.data;
 
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bifunctor;
+import com.github.nprindle.refract.classes.Foldable;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
@@ -81,15 +83,32 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
       return new Pair.Instances.FunctorI<>();
     }
 
+    public static <A> Foldable<Pair.Mu<A>> foldable() {
+      return new Pair.Instances.FunctorI<>();
+    }
+
+    public static <A> Traversable<Pair.Mu<A>> traversable() {
+      return new Pair.Instances.FunctorI<>();
+    }
+
     public static <A> Bifunctor<Pair.Mu2> bifunctor() {
       return Pair.Instances.BifunctorI.INSTANCE;
     }
 
-    private static final class FunctorI<K> implements Functor<Pair.Mu<K>>, Traversable<Pair.Mu<K>> {
+    private static final class FunctorI<K>
+        implements Functor<Pair.Mu<K>>, Foldable<Pair.Mu<K>>, Traversable<Pair.Mu<K>> {
       @Override
       public <A, B> A1<Pair.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Pair.Mu<K>, A> x) {
         return Pair.unbox(x).mapSnd(f);
+      }
+
+      @Override
+      public <M, A> M foldMap(
+          final Monoid<M> monoid,
+          final Function<? super A, ? extends M> f,
+          final A1<Pair.Mu<K>, A> x) {
+        return f.apply(Pair.snd(x));
       }
 
       @Override
