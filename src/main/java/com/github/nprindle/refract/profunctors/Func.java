@@ -24,25 +24,25 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
 
   static final class Mu2 implements K2 {}
 
-  static <A, B> Func<A, B> unbox(A1<Func.Mu<A>, B> p) {
+  static <A, B> Func<A, B> unbox(final A1<Func.Mu<A>, B> p) {
     return (Func<A, B>) p;
   }
 
-  static <A, B> Func<A, B> unbox(A2<Func.Mu2, A, B> p) {
+  static <A, B> Func<A, B> unbox(final A2<Func.Mu2, A, B> p) {
     return (Func<A, B>) p;
   }
 
-  static <A, B> Func<A, B> from(Function<? super A, ? extends B> f) {
+  static <A, B> Func<A, B> from(final Function<? super A, ? extends B> f) {
     return f::apply;
   }
 
   @Override
-  default <I> Func<I, B> compose(Function<? super I, ? extends A> g) {
+  default <I> Func<I, B> compose(final Function<? super I, ? extends A> g) {
     return i -> apply(g.apply(i));
   }
 
   @Override
-  default <C> Func<A, C> andThen(Function<? super B, ? extends C> g) {
+  default <C> Func<A, C> andThen(final Function<? super B, ? extends C> g) {
     return a -> g.apply(apply(a));
   }
 
@@ -68,6 +68,14 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
     }
 
     public static Choice<Func.Mu2> choice() {
+      return ProfunctorI.INSTANCE;
+    }
+
+    public static Traversing<Func.Mu2> traversing() {
+      return ProfunctorI.INSTANCE;
+    }
+
+    public static Mapping<Func.Mu2> mapping() {
       return ProfunctorI.INSTANCE;
     }
 

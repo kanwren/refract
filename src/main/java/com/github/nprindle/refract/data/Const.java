@@ -2,6 +2,7 @@ package com.github.nprindle.refract.data;
 
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bifunctor;
+import com.github.nprindle.refract.classes.Contravariant;
 import com.github.nprindle.refract.classes.Functor;
 import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
@@ -63,14 +64,25 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
       return new Const.Instances.FunctorI<>();
     }
 
+    public static <C> Contravariant<Const.Mu<C>> contravariant() {
+      return new Const.Instances.FunctorI<>();
+    }
+
     public static <C> Bifunctor<Const.Mu2> bifunctor() {
       return Const.Instances.BifunctorI.INSTANCE;
     }
 
-    private static class FunctorI<C> implements Functor<Const.Mu<C>>, Traversable<Const.Mu<C>> {
+    private static class FunctorI<C>
+        implements Functor<Const.Mu<C>>, Contravariant<Const.Mu<C>>, Traversable<Const.Mu<C>> {
       @Override
       public <A, B> A1<Const.Mu<C>, B> map(
           final Function<? super A, ? extends B> f, final A1<Const.Mu<C>, A> x) {
+        return new Const<>(Const.get(x));
+      }
+
+      @Override
+      public <A, B> A1<Const.Mu<C>, B> cmap(
+          final Function<? extends B, ? super A> f, final A1<Const.Mu<C>, A> x) {
         return new Const<>(Const.get(x));
       }
 
