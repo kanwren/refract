@@ -37,20 +37,20 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
     return this.fst;
   }
 
-  public B snd() {
-    return this.snd;
-  }
-
   public static <A, B> A fst(final A1<Pair.Mu<A>, B> p) {
     return ((Pair<A, B>) p).fst;
   }
 
-  public static <A, B> B snd(final A1<Pair.Mu<A>, B> p) {
-    return ((Pair<A, B>) p).snd;
-  }
-
   public static <A, B> A fst(final A2<Pair.Mu2, A, B> p) {
     return ((Pair<A, B>) p).fst;
+  }
+
+  public B snd() {
+    return this.snd;
+  }
+
+  public static <A, B> B snd(final A1<Pair.Mu<A>, B> p) {
+    return ((Pair<A, B>) p).snd;
   }
 
   public static <A, B> B snd(final A2<Pair.Mu2, A, B> p) {

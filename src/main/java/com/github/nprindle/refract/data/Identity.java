@@ -6,7 +6,7 @@ import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.K1;
 import java.util.function.Function;
 
-/** The identity functor, which is isomorphic to the underlying type (modulo subtyping in Java) */
+/** The identity functor, which is isomorphic to the underlying type (modulo subtyping in Java). */
 public final class Identity<A> implements A1<Identity.M, A> {
   public static final class M implements K1 {}
 
