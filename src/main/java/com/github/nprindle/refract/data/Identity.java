@@ -8,10 +8,10 @@ import com.github.nprindle.refract.d17n.K1;
 import java.util.function.Function;
 
 /** The identity functor, which is isomorphic to the underlying type (modulo subtyping in Java). */
-public final class Identity<A> implements A1<Identity.M, A> {
-  public static final class M implements K1 {}
+public final class Identity<A> implements A1<Identity.Mu, A> {
+  public static final class Mu implements K1 {}
 
-  public static <A> Identity<A> unbox(final A1<Identity.M, A> p) {
+  public static <A> Identity<A> unbox(final A1<Identity.Mu, A> p) {
     return (Identity<A>) p;
   }
 
@@ -30,49 +30,49 @@ public final class Identity<A> implements A1<Identity.M, A> {
   }
 
   /** Extract the value from a fully-applied defunctionalization symbol. */
-  public static <A> A get(final A1<Identity.M, A> p) {
+  public static <A> A get(final A1<Identity.Mu, A> p) {
     return Identity.unbox(p).value();
   }
 
   public static final class Instances {
-    public static final Functor<Identity.M> functor() {
+    public static final Functor<Identity.Mu> functor() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
-    public static final Applicative<Identity.M> applicative() {
+    public static final Applicative<Identity.Mu> applicative() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
-    public static final Traversable<Identity.M> traversable() {
+    public static final Traversable<Identity.Mu> traversable() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
     private static enum ApplicativeI
-        implements Applicative<Identity.M>, Functor<Identity.M>, Traversable<Identity.M> {
+        implements Applicative<Identity.Mu>, Functor<Identity.Mu>, Traversable<Identity.Mu> {
       INSTANCE;
 
       @Override
-      public <A, B> A1<Identity.M, B> map(
-          final Function<? super A, ? extends B> f, final A1<Identity.M, A> x) {
+      public <A, B> A1<Identity.Mu, B> map(
+          final Function<? super A, ? extends B> f, final A1<Identity.Mu, A> x) {
         return new Identity<>(f.apply(Identity.get(x)));
       }
 
       @Override
-      public <A> A1<Identity.M, A> pure(final A x) {
+      public <A> A1<Identity.Mu, A> pure(final A x) {
         return new Identity<>(x);
       }
 
       @Override
-      public <A, B> A1<Identity.M, B> ap(
-          final A1<Identity.M, Function<? super A, ? extends B>> f, final A1<Identity.M, A> x) {
+      public <A, B> A1<Identity.Mu, B> ap(
+          final A1<Identity.Mu, Function<? super A, ? extends B>> f, final A1<Identity.Mu, A> x) {
         return new Identity<>(Identity.get(f).apply(Identity.get(x)));
       }
 
       @Override
-      public <F extends K1, A, B> A1<F, A1<Identity.M, B>> traverse(
+      public <F extends K1, A, B> A1<F, A1<Identity.Mu, B>> traverse(
           final Applicative<F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
-          final A1<Identity.M, A> x) {
+          final A1<Identity.Mu, A> x) {
         return applicative.map(Identity::of, f.apply(Identity.get(x)));
       }
     }
