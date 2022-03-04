@@ -8,7 +8,7 @@ import org.junit.Test;
 public class TestMain {
   @Test
   public void testIdentityFunctorInstance() throws Exception {
-    Identity<Integer> i = new Identity<>(5);
+    Identity<Integer> i = Identity.of(5);
 
     int a = i.value();
 
@@ -24,8 +24,8 @@ public class TestMain {
     int a = 3;
     int b = 5;
 
-    Identity<Integer> ia = new Identity<>(a);
-    Identity<Integer> ib = new Identity<>(b);
+    Identity<Integer> ia = Identity.of(a);
+    Identity<Integer> ib = Identity.of(b);
 
     Identity<Integer> res =
         Identity.unbox(Identity.Instances.applicative().apply2((x, y) -> x + y, ia, ib));

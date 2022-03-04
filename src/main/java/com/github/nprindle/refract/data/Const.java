@@ -32,6 +32,10 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
     this.value = value;
   }
 
+  public static <A, B> Const<A, B> of(final A value) {
+    return new Const<>(value);
+  }
+
   public A value() {
     return this.value;
   }

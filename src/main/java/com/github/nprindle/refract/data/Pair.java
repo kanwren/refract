@@ -24,9 +24,13 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
   private final A fst;
   private final B snd;
 
-  public Pair(A fst, B snd) {
+  public Pair(final A fst, final B snd) {
     this.fst = fst;
     this.snd = snd;
+  }
+
+  public static <A, B> Pair<A, B> of(final A a, final B b) {
+    return new Pair<>(a, b);
   }
 
   public A fst() {

@@ -20,6 +20,10 @@ public final class Identity<A> implements A1<Identity.M, A> {
     this.value = value;
   }
 
+  public static <A> Identity<A> of(A a) {
+    return new Identity<>(a);
+  }
+
   public A value() {
     return this.value;
   }
