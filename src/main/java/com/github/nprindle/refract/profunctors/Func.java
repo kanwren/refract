@@ -3,6 +3,7 @@ package com.github.nprindle.refract.profunctors;
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Choice;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Mapping;
 import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Profunctor;
 import com.github.nprindle.refract.classes.Semigroup;
@@ -103,7 +104,9 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
     }
 
     private static enum ProfunctorI
-        implements Profunctor<Func.Mu2>, Strong<Func.Mu2>, Choice<Func.Mu2>, Traversing<Func.Mu2> {
+        implements
+            Profunctor<Func.Mu2>, Strong<Func.Mu2>, Choice<Func.Mu2>, Traversing<Func.Mu2>,
+            Mapping<Func.Mu2> {
       INSTANCE;
 
       @Override
@@ -145,13 +148,21 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
 
       @Override
       public <A, B, S, T> A2<Func.Mu2, S, T> wander(
-          final Wander<S, T, A, B> wander, final A2<Func.Mu2, A, B> p) {
+          final Traversing.Wander<S, T, A, B> wander, final A2<Func.Mu2, A, B> p) {
         final Func<S, T> r =
             s -> {
               final Function<A, A1<Identity.Mu, B>> f = Func.unbox(p).andThen(Identity::of);
               final A1<Identity.Mu, T> t = wander.wander(Identity.Instances.applicative(), f, s);
               return Identity.get(t);
             };
+        return r;
+      }
+
+      @Override
+      public <A, B, S, T> A2<Func.Mu2, S, T> roam(
+          final Roam<S, T, A, B> roam, final A2<Func.Mu2, A, B> p) {
+        // ((a -> b) -> s -> t) -> (a -> b) -> (s -> t)
+        final Func<S, T> r = s -> roam.roam(Func.unbox(p), s);
         return r;
       }
     }

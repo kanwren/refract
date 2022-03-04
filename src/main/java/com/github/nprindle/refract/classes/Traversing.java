@@ -17,6 +17,6 @@ public interface Traversing<P extends K2> extends Strong<P>, Choice<P> {
   @FunctionalInterface
   public static interface Wander<S, T, A, B> {
     <F extends K1> A1<F, T> wander(
-        final Applicative<F> applicative, final Function<A, A1<F, B>> f, S source);
+        final Applicative<F> applicative, final Function<A, A1<F, B>> f, final S source);
   }
 }
