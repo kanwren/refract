@@ -5,6 +5,6 @@ package com.github.nprindle.refract.d17n;
  * B}.
  *
  * <p>Once a symbol is fully-applied (it carries as many type arguments as the underlying concrete
- * type), it may be run into the concrete type using {@code unbox2}.
+ * type), it may be run into the concrete type using {@code unbox}.
  */
 public interface A2<F extends K2, A, B> {}

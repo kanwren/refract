@@ -6,12 +6,12 @@ import java.util.function.Function;
 
 public interface Profunctor<P extends K2> {
   <A, B, C, D> A2<P, C, D> dimap(
-      final Function<? extends C, ? super A> f,
+      final Function<? super C, ? extends A> f,
       final Function<? super B, ? extends D> g,
       final A2<P, A, B> x);
 
   default <A, B, C> A2<P, C, B> lmap(
-      final Function<? extends C, ? super A> f, final A2<P, A, B> x) {
+      final Function<? super C, ? extends A> f, final A2<P, A, B> x) {
     return dimap(f, y -> y, x);
   }
 

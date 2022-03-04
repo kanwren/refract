@@ -17,7 +17,7 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
 
   public static final class Mu2 implements K2 {}
 
-  public static final <A, B> Pair<A, B> unbox2(final A2<Pair.Mu2, A, B> p) {
+  public static final <A, B> Pair<A, B> unbox(final A2<Pair.Mu2, A, B> p) {
     return (Pair<A, B>) p;
   }
 
@@ -45,11 +45,11 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
     return ((Pair<A, B>) p).snd;
   }
 
-  public static <A, B> A fst2(final A2<Pair.Mu2, A, B> p) {
+  public static <A, B> A fst(final A2<Pair.Mu2, A, B> p) {
     return ((Pair<A, B>) p).fst;
   }
 
-  public static <A, B> B snd2(final A2<Pair.Mu2, A, B> p) {
+  public static <A, B> B snd(final A2<Pair.Mu2, A, B> p) {
     return ((Pair<A, B>) p).snd;
   }
 
@@ -95,7 +95,7 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
           final Function<? super A, ? extends C> f,
           final Function<? super B, ? extends D> g,
           final A2<Pair.Mu2, A, B> x) {
-        return Pair.unbox2(x).mapBoth(f, g);
+        return Pair.unbox(x).mapBoth(f, g);
       }
     }
   }

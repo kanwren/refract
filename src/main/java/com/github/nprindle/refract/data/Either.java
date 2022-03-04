@@ -20,7 +20,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
 
   public static final class Mu2 implements K2 {}
 
-  public static final <A, B> Either<A, B> unbox2(final A2<Either.Mu2, A, B> p) {
+  public static final <A, B> Either<A, B> unbox(final A2<Either.Mu2, A, B> p) {
     return (Either<A, B>) p;
   }
 
@@ -222,7 +222,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
           final Function<? super A, ? extends C> f,
           final Function<? super B, ? extends D> g,
           final A2<Either.Mu2, A, B> x) {
-        return Either.unbox2(x).mapBoth(f, g);
+        return Either.unbox(x).mapBoth(f, g);
       }
     }
   }

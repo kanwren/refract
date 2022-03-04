@@ -22,7 +22,7 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
     return (Const<A, B>) p;
   }
 
-  public static <A, B> Const<A, B> unbox2(final A2<Const.Mu2, A, B> p) {
+  public static <A, B> Const<A, B> unbox(final A2<Const.Mu2, A, B> p) {
     return (Const<A, B>) p;
   }
 
@@ -48,8 +48,8 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
    * Extract the inner value of type {@code A} from a fully-applied two-argument defunctionalization
    * symbol.
    */
-  public static <A, B> A get2(final A2<Const.Mu2, A, B> p) {
-    return Const.unbox2(p).value();
+  public static <A, B> A get(final A2<Const.Mu2, A, B> p) {
+    return Const.unbox(p).value();
   }
 
   public static final class Instances {
@@ -77,7 +77,7 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
           final Function<? super A, ? extends C> f,
           final Function<? super B, ? extends D> g,
           final A2<Const.Mu2, A, B> x) {
-        return new Const<>(f.apply(Const.get2(x)));
+        return new Const<>(f.apply(Const.get(x)));
       }
     }
   }
