@@ -28,15 +28,15 @@ public interface Star<F extends K1, D, C>
 
   static final class Mu3 implements K3 {}
 
-  static <F extends K1, D, C> Star<F, D, C> unbox(final A1<Star.Mu<F, D>, C> p) {
+  static <F extends K1, D, C> Star<F, D, C> resolve(final A1<Star.Mu<F, D>, C> p) {
     return (Star<F, D, C>) p;
   }
 
-  static <F extends K1, D, C> Star<F, D, C> unbox(final A2<Star.Mu2<F>, D, C> p) {
+  static <F extends K1, D, C> Star<F, D, C> resolve(final A2<Star.Mu2<F>, D, C> p) {
     return (Star<F, D, C>) p;
   }
 
-  static <F extends K1, D, C> Star<F, D, C> unbox(final A3<Star.Mu3, F, D, C> p) {
+  static <F extends K1, D, C> Star<F, D, C> resolve(final A3<Star.Mu3, F, D, C> p) {
     return (Star<F, D, C>) p;
   }
 
@@ -75,7 +75,7 @@ public interface Star<F extends K1, D, C>
           final Function<? super C, ? extends A> f,
           final Function<? super B, ? extends D> g,
           final A2<Star.Mu2<F>, A, B> x) {
-        final Star<F, C, D> r = c -> functor.map(g, Star.unbox(x).apply(f.apply(c)));
+        final Star<F, C, D> r = c -> functor.map(g, Star.resolve(x).apply(f.apply(c)));
         return r;
       }
 
@@ -83,7 +83,7 @@ public interface Star<F extends K1, D, C>
       public <A, B, C> A2<Star.Mu2<F>, Pair<A, C>, Pair<B, C>> first(
           final A2<Star.Mu2<F>, A, B> p) {
         final Star<F, Pair<A, C>, Pair<B, C>> r =
-            ac -> functor.map(b -> Pair.of(b, ac.snd()), Star.unbox(p).apply(ac.fst()));
+            ac -> functor.map(b -> Pair.of(b, ac.snd()), Star.resolve(p).apply(ac.fst()));
         return r;
       }
 
@@ -91,7 +91,7 @@ public interface Star<F extends K1, D, C>
       public <A, B, C> A2<Star.Mu2<F>, Pair<C, A>, Pair<C, B>> second(
           final A2<Star.Mu2<F>, A, B> p) {
         final Star<F, Pair<C, A>, Pair<C, B>> r =
-            ac -> functor.map(b -> Pair.of(ac.fst(), b), Star.unbox(p).apply(ac.snd()));
+            ac -> functor.map(b -> Pair.of(ac.fst(), b), Star.resolve(p).apply(ac.snd()));
         return r;
       }
     }
@@ -111,7 +111,7 @@ public interface Star<F extends K1, D, C>
         final Star<F, Either<A, C>, Either<B, C>> r =
             eac ->
                 eac.either(
-                    a -> applicative.map(Either::left, Star.unbox(p).apply(a)),
+                    a -> applicative.map(Either::left, Star.resolve(p).apply(a)),
                     c -> applicative.pure(Either.right(c)));
         return r;
       }
@@ -123,14 +123,14 @@ public interface Star<F extends K1, D, C>
             eca ->
                 eca.either(
                     c -> applicative.pure(Either.left(c)),
-                    a -> applicative.map(Either::right, Star.unbox(p).apply(a)));
+                    a -> applicative.map(Either::right, Star.resolve(p).apply(a)));
         return r;
       }
 
       @Override
       public <A, B, S, T> A2<Star.Mu2<F>, S, T> wander(
           final Traversing.Wander<S, T, A, B> wander, final A2<Star.Mu2<F>, A, B> p) {
-        final Star<F, S, T> r = s -> wander.wander(applicative, Star.unbox(p), s);
+        final Star<F, S, T> r = s -> wander.wander(applicative, Star.resolve(p), s);
         return r;
       }
     }

@@ -23,11 +23,11 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
 
   public static final class Mu2 implements K2 {}
 
-  public static <A, B> Const<A, B> unbox(final A1<Const.Mu<A>, B> p) {
+  public static <A, B> Const<A, B> resolve(final A1<Const.Mu<A>, B> p) {
     return (Const<A, B>) p;
   }
 
-  public static <A, B> Const<A, B> unbox(final A2<Const.Mu2, A, B> p) {
+  public static <A, B> Const<A, B> resolve(final A2<Const.Mu2, A, B> p) {
     return (Const<A, B>) p;
   }
 
@@ -50,7 +50,7 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
    * symbol.
    */
   public static <A, B> A get(final A1<Const.Mu<A>, B> p) {
-    return Const.unbox(p).value();
+    return Const.resolve(p).value();
   }
 
   /**
@@ -58,7 +58,7 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
    * symbol.
    */
   public static <A, B> A get(final A2<Const.Mu2, A, B> p) {
-    return Const.unbox(p).value();
+    return Const.resolve(p).value();
   }
 
   public static final class Instances {

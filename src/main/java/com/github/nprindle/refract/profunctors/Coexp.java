@@ -26,19 +26,19 @@ public interface Coexp<S, T, B, A>
 
   static final class Mu4 implements K4 {}
 
-  static <S, T, B, A> Coexp<S, T, B, A> unbox(final A1<Coexp.Mu<S, T, B>, A> p) {
+  static <S, T, B, A> Coexp<S, T, B, A> resolve(final A1<Coexp.Mu<S, T, B>, A> p) {
     return (Coexp<S, T, B, A>) p;
   }
 
-  static <S, T, B, A> Coexp<S, T, B, A> unbox(final A2<Coexp.Mu2<S, T>, B, A> p) {
+  static <S, T, B, A> Coexp<S, T, B, A> resolve(final A2<Coexp.Mu2<S, T>, B, A> p) {
     return (Coexp<S, T, B, A>) p;
   }
 
-  static <S, T, B, A> Coexp<S, T, B, A> unbox(final A3<Coexp.Mu3<S>, T, B, A> p) {
+  static <S, T, B, A> Coexp<S, T, B, A> resolve(final A3<Coexp.Mu3<S>, T, B, A> p) {
     return (Coexp<S, T, B, A>) p;
   }
 
-  static <S, T, B, A> Coexp<S, T, B, A> unbox(final A4<Coexp.Mu4, S, T, B, A> p) {
+  static <S, T, B, A> Coexp<S, T, B, A> resolve(final A4<Coexp.Mu4, S, T, B, A> p) {
     return (Coexp<S, T, B, A>) p;
   }
 
@@ -55,7 +55,7 @@ public interface Coexp<S, T, B, A>
           final Function<? super C, ? extends A> f,
           final Function<? super B, ? extends D> g,
           final A2<Coexp.Mu2<S, T>, A, B> x) {
-        return Coexp.unbox(x)
+        return Coexp.resolve(x)
             .runCoexp(
                 (recall, forget) -> {
                   return new Coexp<S, T, C, D>() {

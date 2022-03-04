@@ -24,11 +24,11 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
 
   static final class Mu2 implements K2 {}
 
-  static <A, B> Func<A, B> unbox(final A1<Func.Mu<A>, B> p) {
+  static <A, B> Func<A, B> resolve(final A1<Func.Mu<A>, B> p) {
     return (Func<A, B>) p;
   }
 
-  static <A, B> Func<A, B> unbox(final A2<Func.Mu2, A, B> p) {
+  static <A, B> Func<A, B> resolve(final A2<Func.Mu2, A, B> p) {
     return (Func<A, B>) p;
   }
 
@@ -92,7 +92,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       @Override
       public <A, B> A1<Func.Mu<E>, B> map(
           final Function<? super A, ? extends B> f, final A1<Func.Mu<E>, A> x) {
-        return Func.unbox(x).andThen(f);
+        return Func.resolve(x).andThen(f);
       }
 
       @Override
@@ -106,7 +106,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
           final A1<Func.Mu<E>, Function<? super A, ? extends B>> f, final A1<Func.Mu<E>, A> x) {
         // (e -> a -> b) -> (e -> a) -> (e -> b)
         // \f g e -> f e (g e)
-        final Func<E, B> g = e -> Func.unbox(f).apply(e).apply(Func.unbox(x).apply(e));
+        final Func<E, B> g = e -> Func.resolve(f).apply(e).apply(Func.resolve(x).apply(e));
         return g;
       }
     }
@@ -123,34 +123,34 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
           final Function<? super B, ? extends D> g,
           final A2<Func.Mu2, A, B> x) {
         // (c -> a) -> (b -> d) -> (a -> b) -> (c -> d)
-        return Func.unbox(x).<C>compose(f).andThen(g);
+        return Func.resolve(x).<C>compose(f).andThen(g);
       }
 
       @Override
       public <A, B, C> A2<Func.Mu2, Pair<A, C>, Pair<B, C>> first(final A2<Func.Mu2, A, B> p) {
         // (a -> b) -> ((a, c) -> (b, c))
-        final Func<Pair<A, C>, Pair<B, C>> r = ac -> ac.mapFst(Func.unbox(p));
+        final Func<Pair<A, C>, Pair<B, C>> r = ac -> ac.mapFst(Func.resolve(p));
         return r;
       }
 
       @Override
       public <A, B, C> A2<Func.Mu2, Pair<C, A>, Pair<C, B>> second(final A2<Func.Mu2, A, B> p) {
         // (a -> b) -> ((c, a) -> (c, b))
-        final Func<Pair<C, A>, Pair<C, B>> r = ac -> ac.mapSnd(Func.unbox(p));
+        final Func<Pair<C, A>, Pair<C, B>> r = ac -> ac.mapSnd(Func.resolve(p));
         return r;
       }
 
       @Override
       public <A, B, C> A2<Func.Mu2, Either<A, C>, Either<B, C>> left(final A2<Func.Mu2, A, B> p) {
         // (a -> b) -> (Either a c -> Either b c)
-        final Func<Either<A, C>, Either<B, C>> r = eac -> eac.mapLeft(Func.unbox(p));
+        final Func<Either<A, C>, Either<B, C>> r = eac -> eac.mapLeft(Func.resolve(p));
         return r;
       }
 
       @Override
       public <A, B, C> A2<Func.Mu2, Either<C, A>, Either<C, B>> right(final A2<Func.Mu2, A, B> p) {
         // (a -> b) -> (Either c a -> Either c b)
-        final Func<Either<C, A>, Either<C, B>> r = eac -> eac.mapRight(Func.unbox(p));
+        final Func<Either<C, A>, Either<C, B>> r = eac -> eac.mapRight(Func.resolve(p));
         return r;
       }
 
@@ -159,7 +159,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
           final Traversing.Wander<S, T, A, B> wander, final A2<Func.Mu2, A, B> p) {
         final Func<S, T> r =
             s -> {
-              final Function<A, A1<Identity.Mu, B>> f = Func.unbox(p).andThen(Identity::of);
+              final Function<A, A1<Identity.Mu, B>> f = Func.resolve(p).andThen(Identity::of);
               final A1<Identity.Mu, T> t = wander.wander(Identity.Instances.applicative(), f, s);
               return Identity.get(t);
             };
@@ -170,7 +170,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       public <A, B, S, T> A2<Func.Mu2, S, T> roam(
           final Roam<S, T, A, B> roam, final A2<Func.Mu2, A, B> p) {
         // ((a -> b) -> s -> t) -> (a -> b) -> (s -> t)
-        final Func<S, T> r = s -> roam.roam(Func.unbox(p), s);
+        final Func<S, T> r = s -> roam.roam(Func.resolve(p), s);
         return r;
       }
     }

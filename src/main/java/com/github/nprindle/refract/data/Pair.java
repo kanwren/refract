@@ -15,13 +15,13 @@ import java.util.function.Function;
 public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
   public static final class Mu<A> implements K1 {}
 
-  public static final <A, B> Pair<A, B> unbox(final A1<Pair.Mu<A>, B> p) {
+  public static final <A, B> Pair<A, B> resolve(final A1<Pair.Mu<A>, B> p) {
     return (Pair<A, B>) p;
   }
 
   public static final class Mu2 implements K2 {}
 
-  public static final <A, B> Pair<A, B> unbox(final A2<Pair.Mu2, A, B> p) {
+  public static final <A, B> Pair<A, B> resolve(final A2<Pair.Mu2, A, B> p) {
     return (Pair<A, B>) p;
   }
 
@@ -100,7 +100,7 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
       @Override
       public <A, B> A1<Pair.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Pair.Mu<K>, A> x) {
-        return Pair.unbox(x).mapSnd(f);
+        return Pair.resolve(x).mapSnd(f);
       }
 
       @Override
@@ -116,7 +116,7 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
           final Applicative<F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Pair.Mu<K>, A> x) {
-        final Pair<K, A> p = Pair.unbox(x);
+        final Pair<K, A> p = Pair.resolve(x);
         final K k = p.fst();
         final A a = p.snd();
         return applicative.map(b -> Pair.of(k, b), f.apply(a));
@@ -131,7 +131,7 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
           final Function<? super A, ? extends C> f,
           final Function<? super B, ? extends D> g,
           final A2<Pair.Mu2, A, B> x) {
-        return Pair.unbox(x).mapBoth(f, g);
+        return Pair.resolve(x).mapBoth(f, g);
       }
     }
   }

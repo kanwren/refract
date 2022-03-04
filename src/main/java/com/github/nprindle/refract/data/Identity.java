@@ -13,7 +13,7 @@ import java.util.function.Function;
 public final class Identity<A> implements A1<Identity.Mu, A> {
   public static final class Mu implements K1 {}
 
-  public static <A> Identity<A> unbox(final A1<Identity.Mu, A> p) {
+  public static <A> Identity<A> resolve(final A1<Identity.Mu, A> p) {
     return (Identity<A>) p;
   }
 
@@ -33,7 +33,7 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
 
   /** Extract the value from a fully-applied defunctionalization symbol. */
   public static <A> A get(final A1<Identity.Mu, A> p) {
-    return Identity.unbox(p).value();
+    return Identity.resolve(p).value();
   }
 
   public static final class Instances {

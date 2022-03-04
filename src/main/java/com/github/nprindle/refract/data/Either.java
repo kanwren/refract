@@ -17,13 +17,13 @@ import java.util.function.Function;
 public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2, A, B> {
   public static final class Mu<A> implements K1 {}
 
-  public static final <A, B> Either<A, B> unbox(final A1<Either.Mu<A>, B> p) {
+  public static final <A, B> Either<A, B> resolve(final A1<Either.Mu<A>, B> p) {
     return (Either<A, B>) p;
   }
 
   public static final class Mu2 implements K2 {}
 
-  public static final <A, B> Either<A, B> unbox(final A2<Either.Mu2, A, B> p) {
+  public static final <A, B> Either<A, B> resolve(final A2<Either.Mu2, A, B> p) {
     return (Either<A, B>) p;
   }
 
@@ -215,7 +215,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
       @Override
       public <A, B> A1<Either.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Either.Mu<K>, A> x) {
-        return Either.unbox(x).mapRight(f);
+        return Either.resolve(x).mapRight(f);
       }
 
       @Override
@@ -226,7 +226,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
       @Override
       public <A, B> A1<Either.Mu<K>, B> ap(
           final A1<Either.Mu<K>, Function<? super A, ? extends B>> f, final A1<Either.Mu<K>, A> x) {
-        return Either.unbox(f).flatMap(g -> Either.unbox(x).mapRight(y -> g.apply(y)));
+        return Either.resolve(f).flatMap(g -> Either.resolve(x).mapRight(y -> g.apply(y)));
       }
 
       @Override
@@ -234,7 +234,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
           final Monoid<M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Either.Mu<K>, A> x) {
-        return Either.unbox(x).either(e -> monoid.empty(), f);
+        return Either.resolve(x).either(e -> monoid.empty(), f);
       }
 
       @Override
@@ -242,7 +242,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
           final Applicative<F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Either.Mu<K>, A> x) {
-        final Either<K, A> e = Either.unbox(x);
+        final Either<K, A> e = Either.resolve(x);
         return e.either(
             k -> applicative.pure(Either.left(k)), a -> applicative.map(Either::right, f.apply(a)));
       }
@@ -254,7 +254,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
           final Function<? super A, ? extends C> f,
           final Function<? super B, ? extends D> g,
           final A2<Either.Mu2, A, B> x) {
-        return Either.unbox(x).mapBoth(f, g);
+        return Either.resolve(x).mapBoth(f, g);
       }
     }
   }

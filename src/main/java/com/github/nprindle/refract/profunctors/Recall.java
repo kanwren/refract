@@ -26,15 +26,15 @@ public interface Recall<R, A, B>
 
   static final class Mu3 implements K3 {}
 
-  static <R, A, B> Recall<R, A, B> unbox(final A1<Recall.Mu<R, A>, B> p) {
+  static <R, A, B> Recall<R, A, B> resolve(final A1<Recall.Mu<R, A>, B> p) {
     return (Recall<R, A, B>) p;
   }
 
-  static <R, A, B> Recall<R, A, B> unbox(final A2<Recall.Mu2<R>, A, B> p) {
+  static <R, A, B> Recall<R, A, B> resolve(final A2<Recall.Mu2<R>, A, B> p) {
     return (Recall<R, A, B>) p;
   }
 
-  static <R, A, B> Recall<R, A, B> unbox(final A3<Recall.Mu3, R, A, B> p) {
+  static <R, A, B> Recall<R, A, B> resolve(final A3<Recall.Mu3, R, A, B> p) {
     return (Recall<R, A, B>) p;
   }
 
@@ -73,7 +73,7 @@ public interface Recall<R, A, B>
           final Function<? super C, ? extends A> f,
           final Function<? super B, ? extends D> g,
           final A2<Recall.Mu2<R>, A, B> x) {
-        final Recall<R, C, D> h = r -> g.apply(Recall.unbox(x).apply(r));
+        final Recall<R, C, D> h = r -> g.apply(Recall.resolve(x).apply(r));
         return h;
       }
 
@@ -82,35 +82,37 @@ public interface Recall<R, A, B>
           final Function<? super A, ? extends C> f,
           final Function<? super B, ? extends D> g,
           final A2<Recall.Mu2<R>, A, B> x) {
-        final Recall<R, C, D> h = r -> g.apply(Recall.unbox(x).apply(r));
+        final Recall<R, C, D> h = r -> g.apply(Recall.resolve(x).apply(r));
         return h;
       }
 
       @Override
       public <A, B, C> A2<Recall.Mu2<R>, Either<A, C>, Either<B, C>> left(
           final A2<Recall.Mu2<R>, A, B> p) {
-        final Recall<R, Either<A, C>, Either<B, C>> h = r -> Either.left(Recall.unbox(p).apply(r));
+        final Recall<R, Either<A, C>, Either<B, C>> h =
+            r -> Either.left(Recall.resolve(p).apply(r));
         return h;
       }
 
       @Override
       public <A, B, C> A2<Recall.Mu2<R>, Either<C, A>, Either<C, B>> right(
           final A2<Recall.Mu2<R>, A, B> p) {
-        final Recall<R, Either<C, A>, Either<C, B>> h = r -> Either.right(Recall.unbox(p).apply(r));
+        final Recall<R, Either<C, A>, Either<C, B>> h =
+            r -> Either.right(Recall.resolve(p).apply(r));
         return h;
       }
 
       @Override
       public <A, B, C> A2<Recall.Mu2<R>, A, B> unfirst(
           final A2<Recall.Mu2<R>, Pair<A, C>, Pair<B, C>> p) {
-        final Recall<R, A, B> h = r -> Recall.unbox(p).apply(r).fst();
+        final Recall<R, A, B> h = r -> Recall.resolve(p).apply(r).fst();
         return h;
       }
 
       @Override
       public <A, B, C> A2<Recall.Mu2<R>, A, B> unsecond(
           final A2<Recall.Mu2<R>, Pair<C, A>, Pair<C, B>> p) {
-        final Recall<R, A, B> h = r -> Recall.unbox(p).apply(r).snd();
+        final Recall<R, A, B> h = r -> Recall.resolve(p).apply(r).snd();
         return h;
       }
     }

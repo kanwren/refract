@@ -32,15 +32,15 @@ public interface Forget<R, A, B>
 
   static final class Mu3 implements K3 {}
 
-  static <R, A, B> Forget<R, A, B> unbox(final A1<Forget.Mu<R, A>, B> p) {
+  static <R, A, B> Forget<R, A, B> resolve(final A1<Forget.Mu<R, A>, B> p) {
     return (Forget<R, A, B>) p;
   }
 
-  static <R, A, B> Forget<R, A, B> unbox(final A2<Forget.Mu2<R>, A, B> p) {
+  static <R, A, B> Forget<R, A, B> resolve(final A2<Forget.Mu2<R>, A, B> p) {
     return (Forget<R, A, B>) p;
   }
 
-  static <R, A, B> Forget<R, A, B> unbox(final A3<Forget.Mu3, R, A, B> p) {
+  static <R, A, B> Forget<R, A, B> resolve(final A3<Forget.Mu3, R, A, B> p) {
     return (Forget<R, A, B>) p;
   }
 
@@ -93,14 +93,14 @@ public interface Forget<R, A, B>
       @Override
       public <A, B> A1<Forget.Mu<R, K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Forget.Mu<R, K>, A> x) {
-        final Forget<R, K, B> r = Forget.unbox(x)::apply;
+        final Forget<R, K, B> r = Forget.resolve(x)::apply;
         return r;
       }
 
       @Override
       public <A, B> A1<Forget.Mu<R, K>, B> cmap(
           final Function<? extends B, ? super A> f, final A1<Forget.Mu<R, K>, A> x) {
-        final Forget<R, K, B> r = Forget.unbox(x)::apply;
+        final Forget<R, K, B> r = Forget.resolve(x)::apply;
         return r;
       }
 
@@ -117,7 +117,7 @@ public interface Forget<R, A, B>
           final Applicative<F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Forget.Mu<R, K>, A> x) {
-        final Forget<R, K, B> r = Forget.unbox(x)::apply;
+        final Forget<R, K, B> r = Forget.resolve(x)::apply;
         return applicative.pure(r);
       }
     }
@@ -132,7 +132,7 @@ public interface Forget<R, A, B>
           final Function<? super C, ? extends A> f,
           final Function<? super B, ? extends D> g,
           final A2<Forget.Mu2<R>, A, B> x) {
-        final Forget<R, C, D> r = c -> Forget.unbox(x).apply(f.apply(c));
+        final Forget<R, C, D> r = c -> Forget.resolve(x).apply(f.apply(c));
         return r;
       }
 
@@ -141,35 +141,35 @@ public interface Forget<R, A, B>
           final Function<? super C, ? extends A> f,
           final Function<? super D, ? extends B> g,
           final A2<Forget.Mu2<R>, A, B> x) {
-        final Forget<R, C, D> r = c -> Forget.unbox(x).apply(f.apply(c));
+        final Forget<R, C, D> r = c -> Forget.resolve(x).apply(f.apply(c));
         return r;
       }
 
       @Override
       public <A, B, C> A2<Forget.Mu2<R>, Pair<A, C>, Pair<B, C>> first(
           final A2<Forget.Mu2<R>, A, B> p) {
-        final Forget<R, Pair<A, C>, Pair<B, C>> r = ac -> Forget.unbox(p).apply(ac.fst());
+        final Forget<R, Pair<A, C>, Pair<B, C>> r = ac -> Forget.resolve(p).apply(ac.fst());
         return r;
       }
 
       @Override
       public <A, B, C> A2<Forget.Mu2<R>, Pair<C, A>, Pair<C, B>> second(
           final A2<Forget.Mu2<R>, A, B> p) {
-        final Forget<R, Pair<C, A>, Pair<C, B>> r = ca -> Forget.unbox(p).apply(ca.snd());
+        final Forget<R, Pair<C, A>, Pair<C, B>> r = ca -> Forget.resolve(p).apply(ca.snd());
         return r;
       }
 
       @Override
       public <A, B, C> A2<Forget.Mu2<R>, A, B> unleft(
           final A2<Forget.Mu2<R>, Either<A, C>, Either<B, C>> p) {
-        final Forget<R, A, B> r = a -> Forget.unbox(p).apply(Either.left(a));
+        final Forget<R, A, B> r = a -> Forget.resolve(p).apply(Either.left(a));
         return r;
       }
 
       @Override
       public <A, B, C> A2<Forget.Mu2<R>, A, B> unright(
           final A2<Forget.Mu2<R>, Either<C, A>, Either<C, B>> p) {
-        final Forget<R, A, B> r = a -> Forget.unbox(p).apply(Either.right(a));
+        final Forget<R, A, B> r = a -> Forget.resolve(p).apply(Either.right(a));
         return r;
       }
     }
