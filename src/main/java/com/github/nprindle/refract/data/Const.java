@@ -62,31 +62,33 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
   }
 
   public static final class Instances {
-    public static <C> Functor<Const.Mu<C>> functor() {
+    public static <C> Functor<? extends Functor.Mu, Const.Mu<C>> functor() {
       return new Const.Instances.FunctorI<>();
     }
 
-    public static <C> Contravariant<Const.Mu<C>> contravariant() {
+    public static <C> Contravariant<? extends Contravariant.Mu, Const.Mu<C>> contravariant() {
       return new Const.Instances.FunctorI<>();
     }
 
-    public static <C> Foldable<Const.Mu<C>> foldable() {
+    public static <C> Foldable<? extends Foldable.Mu, Const.Mu<C>> foldable() {
       return new Const.Instances.FunctorI<>();
     }
 
-    public static <C> Traversable<Const.Mu<C>> traversable() {
+    public static <C> Traversable<? extends Traversable.Mu, Const.Mu<C>> traversable() {
       return new Const.Instances.FunctorI<>();
     }
 
-    public static <C> Bifunctor<Const.Mu2> bifunctor() {
+    public static <C> Bifunctor<? extends Bifunctor.Mu, Const.Mu2> bifunctor() {
       return Const.Instances.BifunctorI.INSTANCE;
     }
 
     private static class FunctorI<C>
-        implements Functor<Const.Mu<C>>,
-            Contravariant<Const.Mu<C>>,
-            Foldable<Const.Mu<C>>,
-            Traversable<Const.Mu<C>> {
+        implements Functor<FunctorI.Mu, Const.Mu<C>>,
+            Contravariant<FunctorI.Mu, Const.Mu<C>>,
+            Foldable<FunctorI.Mu, Const.Mu<C>>,
+            Traversable<FunctorI.Mu, Const.Mu<C>> {
+      public static final class Mu implements Traversable.Mu, Contravariant.Mu {}
+
       @Override
       public <A, B> A1<Const.Mu<C>, B> map(
           final Function<? super A, ? extends B> f, final A1<Const.Mu<C>, A> x) {
@@ -101,7 +103,7 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
 
       @Override
       public <M, A> M foldMap(
-          final Monoid<M> monoid,
+          final Monoid<? extends Monoid.Mu, M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Const.Mu<C>, A> x) {
         return monoid.empty();
@@ -109,15 +111,17 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
 
       @Override
       public <F extends K1, A, B> A1<F, A1<Const.Mu<C>, B>> traverse(
-          final Applicative<F> applicative,
+          final Applicative<? extends Applicative.Mu, F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Const.Mu<C>, A> x) {
         return applicative.pure(Const.of(Const.get(x)));
       }
     }
 
-    private static enum BifunctorI implements Bifunctor<Const.Mu2> {
+    private static enum BifunctorI implements Bifunctor<BifunctorI.Mu, Const.Mu2> {
       INSTANCE;
+
+      public static final class Mu implements Bifunctor.Mu {}
 
       @Override
       public <A, B, C, D> A2<Const.Mu2, C, D> bimap(

@@ -187,31 +187,33 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
   }
 
   public static final class Instances {
-    public static <A> Functor<Either.Mu<A>> functor() {
+    public static <A> Functor<? extends Functor.Mu, Either.Mu<A>> functor() {
       return new Either.Instances.ApplicativeI<>();
     }
 
-    public static <A> Applicative<Either.Mu<A>> applicative() {
+    public static <A> Applicative<? extends Applicative.Mu, Either.Mu<A>> applicative() {
       return new Either.Instances.ApplicativeI<>();
     }
 
-    public static <A> Foldable<Either.Mu<A>> foldable() {
+    public static <A> Foldable<? extends Foldable.Mu, Either.Mu<A>> foldable() {
       return new Either.Instances.ApplicativeI<>();
     }
 
-    public static <A> Traversable<Either.Mu<A>> traversable() {
+    public static <A> Traversable<? extends Traversable.Mu, Either.Mu<A>> traversable() {
       return new Either.Instances.ApplicativeI<>();
     }
 
-    public static <A> Bifunctor<Either.Mu2> bifunctor() {
+    public static <A> Bifunctor<? extends Bifunctor.Mu, Either.Mu2> bifunctor() {
       return new Either.Instances.BifunctorI<>();
     }
 
     private static final class ApplicativeI<K>
-        implements Applicative<Either.Mu<K>>,
-            Functor<Either.Mu<K>>,
-            Foldable<Either.Mu<K>>,
-            Traversable<Either.Mu<K>> {
+        implements Applicative<ApplicativeI.Mu, Either.Mu<K>>,
+            Functor<ApplicativeI.Mu, Either.Mu<K>>,
+            Foldable<ApplicativeI.Mu, Either.Mu<K>>,
+            Traversable<ApplicativeI.Mu, Either.Mu<K>> {
+      public static final class Mu implements Traversable.Mu, Applicative.Mu {}
+
       @Override
       public <A, B> A1<Either.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Either.Mu<K>, A> x) {
@@ -231,7 +233,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
 
       @Override
       public <M, A> M foldMap(
-          final Monoid<M> monoid,
+          final Monoid<? extends Monoid.Mu, M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Either.Mu<K>, A> x) {
         return Either.resolve(x).either(e -> monoid.empty(), f);
@@ -239,7 +241,7 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
 
       @Override
       public <F extends K1, A, B> A1<F, A1<Either.Mu<K>, B>> traverse(
-          final Applicative<F> applicative,
+          final Applicative<? extends Applicative.Mu, F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Either.Mu<K>, A> x) {
         final Either<K, A> e = Either.resolve(x);
@@ -248,7 +250,9 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
       }
     }
 
-    private static final class BifunctorI<K> implements Bifunctor<Either.Mu2> {
+    private static final class BifunctorI<K> implements Bifunctor<BifunctorI.Mu, Either.Mu2> {
+      public static final class Mu implements Bifunctor.Mu {}
+
       @Override
       public <A, B, C, D> A2<Either.Mu2, C, D> bimap(
           final Function<? super A, ? extends C> f,

@@ -45,11 +45,13 @@ public interface Coexp<S, T, B, A>
   <R> R runCoexp(final BiFunction<? super Function<S, A>, ? super Function<B, T>, ? extends R> f);
 
   static final class Instances {
-    public static <S, T> Profunctor<Coexp.Mu2<S, T>> profunctor() {
+    public static <S, T> Profunctor<? extends Profunctor.Mu, Coexp.Mu2<S, T>> profunctor() {
       return new Coexp.Instances.ProfunctorI<>();
     }
 
-    private static class ProfunctorI<S, T> implements Profunctor<Coexp.Mu2<S, T>> {
+    private static class ProfunctorI<S, T> implements Profunctor<ProfunctorI.Mu, Coexp.Mu2<S, T>> {
+      public static final class Mu implements Profunctor.Mu {}
+
       @Override
       public <A, B, C, D> A2<Coexp.Mu2<S, T>, C, D> dimap(
           final Function<? super C, ? extends A> f,

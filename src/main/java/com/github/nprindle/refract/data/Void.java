@@ -22,17 +22,20 @@ public final class Void {
    * Since {@code Void} is uninhabited, any {@code Functor} containing it holds no values; since the
    * type parameter is phantom, {@code vacuous} can be used to transform it arbitrarily.
    */
-  public static <F extends K1, T> A1<F, T> vacuous(final Functor<F> functor, final A1<F, Void> v) {
+  public static <F extends K1, T> A1<F, T> vacuous(
+      final Functor<? extends Functor.Mu, F> functor, final A1<F, Void> v) {
     return functor.map(Void::absurd, v);
   }
 
   public static final class Instances {
-    public static Semigroup<Void> semigroup() {
+    public static Semigroup<? extends Semigroup.Mu, Void> semigroup() {
       return Void.Instances.SemigroupI.INSTANCE;
     }
 
-    private static enum SemigroupI implements Semigroup<Void> {
+    private static enum SemigroupI implements Semigroup<SemigroupI.Mu, Void> {
       INSTANCE;
+
+      public static final class Mu implements Semigroup.Mu {}
 
       @Override
       public Void append(Void a, Void b) {

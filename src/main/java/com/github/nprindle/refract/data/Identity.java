@@ -37,27 +37,29 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
   }
 
   public static final class Instances {
-    public static final Functor<Identity.Mu> functor() {
+    public static final Functor<? extends Functor.Mu, Identity.Mu> functor() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
-    public static final Applicative<Identity.Mu> applicative() {
+    public static final Applicative<? extends Applicative.Mu, Identity.Mu> applicative() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
-    public static final Foldable<Identity.Mu> foldable() {
+    public static final Foldable<? extends Foldable.Mu, Identity.Mu> foldable() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
-    public static final Traversable<Identity.Mu> traversable() {
+    public static final Traversable<? extends Traversable.Mu, Identity.Mu> traversable() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }
 
     private static enum ApplicativeI
         implements
-            Applicative<Identity.Mu>, Functor<Identity.Mu>, Foldable<Identity.Mu>,
-            Traversable<Identity.Mu> {
+            Applicative<ApplicativeI.Mu, Identity.Mu>, Functor<ApplicativeI.Mu, Identity.Mu>,
+            Foldable<ApplicativeI.Mu, Identity.Mu>, Traversable<ApplicativeI.Mu, Identity.Mu> {
       INSTANCE;
+
+      public static final class Mu implements Traversable.Mu, Applicative.Mu {}
 
       @Override
       public <A, B> A1<Identity.Mu, B> map(
@@ -78,7 +80,7 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
 
       @Override
       public <M, A> M foldMap(
-          final Monoid<M> monoid,
+          final Monoid<? extends Monoid.Mu, M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Identity.Mu, A> x) {
         return f.apply(Identity.get(x));
@@ -86,7 +88,7 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
 
       @Override
       public <F extends K1, A, B> A1<F, A1<Identity.Mu, B>> traverse(
-          final Applicative<F> applicative,
+          final Applicative<? extends Applicative.Mu, F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Identity.Mu, A> x) {
         return applicative.map(Identity::of, f.apply(Identity.get(x)));

@@ -79,24 +79,28 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
   }
 
   public static final class Instances {
-    public static <A> Functor<Pair.Mu<A>> functor() {
+    public static <A> Functor<? extends Functor.Mu, Pair.Mu<A>> functor() {
       return new Pair.Instances.FunctorI<>();
     }
 
-    public static <A> Foldable<Pair.Mu<A>> foldable() {
+    public static <A> Foldable<? extends Foldable.Mu, Pair.Mu<A>> foldable() {
       return new Pair.Instances.FunctorI<>();
     }
 
-    public static <A> Traversable<Pair.Mu<A>> traversable() {
+    public static <A> Traversable<? extends Traversable.Mu, Pair.Mu<A>> traversable() {
       return new Pair.Instances.FunctorI<>();
     }
 
-    public static <A> Bifunctor<Pair.Mu2> bifunctor() {
+    public static <A> Bifunctor<? extends Bifunctor.Mu, Pair.Mu2> bifunctor() {
       return Pair.Instances.BifunctorI.INSTANCE;
     }
 
     private static final class FunctorI<K>
-        implements Functor<Pair.Mu<K>>, Foldable<Pair.Mu<K>>, Traversable<Pair.Mu<K>> {
+        implements Functor<FunctorI.Mu, Pair.Mu<K>>,
+            Foldable<FunctorI.Mu, Pair.Mu<K>>,
+            Traversable<FunctorI.Mu, Pair.Mu<K>> {
+      public static final class Mu implements Traversable.Mu {}
+
       @Override
       public <A, B> A1<Pair.Mu<K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Pair.Mu<K>, A> x) {
@@ -105,7 +109,7 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
 
       @Override
       public <M, A> M foldMap(
-          final Monoid<M> monoid,
+          final Monoid<? extends Monoid.Mu, M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Pair.Mu<K>, A> x) {
         return f.apply(Pair.snd(x));
@@ -113,7 +117,7 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
 
       @Override
       public <F extends K1, A, B> A1<F, A1<Pair.Mu<K>, B>> traverse(
-          final Applicative<F> applicative,
+          final Applicative<? extends Applicative.Mu, F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Pair.Mu<K>, A> x) {
         final Pair<K, A> p = Pair.resolve(x);
@@ -123,8 +127,10 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
       }
     }
 
-    private static enum BifunctorI implements Bifunctor<Pair.Mu2> {
+    private static enum BifunctorI implements Bifunctor<BifunctorI.Mu, Pair.Mu2> {
       INSTANCE;
+
+      public static final class Mu implements Bifunctor.Mu {}
 
       @Override
       public <A, B, C, D> A2<Pair.Mu2, C, D> bimap(

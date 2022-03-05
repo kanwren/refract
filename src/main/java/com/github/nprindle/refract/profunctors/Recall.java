@@ -47,27 +47,29 @@ public interface Recall<R, A, B>
   }
 
   static final class Instances {
-    public static <R> Profunctor<Recall.Mu2<R>> profunctor() {
+    public static <R> Profunctor<? extends Profunctor.Mu, Recall.Mu2<R>> profunctor() {
       return new Recall.Instances.ProfunctorI<>();
     }
 
-    public static <R> Choice<Recall.Mu2<R>> choice() {
+    public static <R> Choice<? extends Choice.Mu, Recall.Mu2<R>> choice() {
       return new Recall.Instances.ProfunctorI<>();
     }
 
-    public static <R> Costrong<Recall.Mu2<R>> costrong() {
+    public static <R> Costrong<? extends Costrong.Mu, Recall.Mu2<R>> costrong() {
       return new Recall.Instances.ProfunctorI<>();
     }
 
-    public static <R> Bifunctor<Recall.Mu2<R>> bifunctor() {
+    public static <R> Bifunctor<? extends Bifunctor.Mu, Recall.Mu2<R>> bifunctor() {
       return new Recall.Instances.ProfunctorI<>();
     }
 
     private static class ProfunctorI<R>
-        implements Profunctor<Recall.Mu2<R>>,
-            Choice<Recall.Mu2<R>>,
-            Costrong<Recall.Mu2<R>>,
-            Bifunctor<Recall.Mu2<R>> {
+        implements Profunctor<ProfunctorI.Mu, Recall.Mu2<R>>,
+            Choice<ProfunctorI.Mu, Recall.Mu2<R>>,
+            Costrong<ProfunctorI.Mu, Recall.Mu2<R>>,
+            Bifunctor<ProfunctorI.Mu, Recall.Mu2<R>> {
+      public static final class Mu implements Profunctor.Mu, Choice.Mu, Costrong.Mu, Bifunctor.Mu {}
+
       @Override
       public <A, B, C, D> A2<Recall.Mu2<R>, C, D> dimap(
           final Function<? super C, ? extends A> f,

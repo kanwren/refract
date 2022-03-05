@@ -8,16 +8,18 @@ public enum Unit {
   UNIT;
 
   public static final class Instances {
-    public static Semigroup<Unit> semigroup() {
+    public static Semigroup<? extends Semigroup.Mu, Unit> semigroup() {
       return Unit.Instances.MonoidI.INSTANCE;
     }
 
-    public static Monoid<Unit> monoid() {
+    public static Monoid<? extends Monoid.Mu, Unit> monoid() {
       return Unit.Instances.MonoidI.INSTANCE;
     }
 
-    private static enum MonoidI implements Monoid<Unit> {
+    private static enum MonoidI implements Monoid<MonoidI.Mu, Unit> {
       INSTANCE;
+
+      public static final class Mu implements Monoid.Mu {}
 
       @Override
       public Unit empty() {

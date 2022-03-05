@@ -53,43 +53,47 @@ public interface Forget<R, A, B>
   }
 
   static final class Instances {
-    public static <R, A> Functor<Forget.Mu<R, A>> functor() {
+    public static <R, A> Functor<? extends Functor.Mu, Forget.Mu<R, A>> functor() {
       return new Forget.Instances.FunctorI<>();
     }
 
-    public static <R, A> Contravariant<Forget.Mu<R, A>> contravariant() {
+    public static <R, A>
+        Contravariant<? extends Contravariant.Mu, Forget.Mu<R, A>> contravariant() {
       return new Forget.Instances.FunctorI<>();
     }
 
-    public static <R, A> Foldable<Forget.Mu<R, A>> foldable() {
+    public static <R, A> Foldable<? extends Foldable.Mu, Forget.Mu<R, A>> foldable() {
       return new Forget.Instances.FunctorI<>();
     }
 
-    public static <R, A> Traversable<Forget.Mu<R, A>> traversable() {
+    public static <R, A> Traversable<? extends Traversable.Mu, Forget.Mu<R, A>> traversable() {
       return new Forget.Instances.FunctorI<>();
     }
 
-    public static <R> Profunctor<Forget.Mu2<R>> profunctor() {
+    public static <R> Profunctor<? extends Profunctor.Mu, Forget.Mu2<R>> profunctor() {
       return new Forget.Instances.ProfunctorI<>();
     }
 
-    public static <R> Strong<Forget.Mu2<R>> strong() {
+    public static <R> Strong<? extends Strong.Mu, Forget.Mu2<R>> strong() {
       return new Forget.Instances.ProfunctorI<>();
     }
 
-    public static <R> Cochoice<Forget.Mu2<R>> cochoice() {
+    public static <R> Cochoice<? extends Cochoice.Mu, Forget.Mu2<R>> cochoice() {
       return new Forget.Instances.ProfunctorI<>();
     }
 
-    public static <R> Bicontravariant<Forget.Mu2<R>> bicontravariant() {
+    public static <R>
+        Bicontravariant<? extends Bicontravariant.Mu, Forget.Mu2<R>> bicontravariant() {
       return new Forget.Instances.ProfunctorI<>();
     }
 
     private static class FunctorI<R, K>
-        implements Functor<Forget.Mu<R, K>>,
-            Contravariant<Forget.Mu<R, K>>,
-            Foldable<Forget.Mu<R, K>>,
-            Traversable<Forget.Mu<R, K>> {
+        implements Functor<FunctorI.Mu, Forget.Mu<R, K>>,
+            Contravariant<FunctorI.Mu, Forget.Mu<R, K>>,
+            Foldable<FunctorI.Mu, Forget.Mu<R, K>>,
+            Traversable<FunctorI.Mu, Forget.Mu<R, K>> {
+      public static final class Mu implements Traversable.Mu, Contravariant.Mu {}
+
       @Override
       public <A, B> A1<Forget.Mu<R, K>, B> map(
           final Function<? super A, ? extends B> f, final A1<Forget.Mu<R, K>, A> x) {
@@ -106,7 +110,7 @@ public interface Forget<R, A, B>
 
       @Override
       public <M, A> M foldMap(
-          final Monoid<M> monoid,
+          final Monoid<? extends Monoid.Mu, M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Forget.Mu<R, K>, A> x) {
         return monoid.empty();
@@ -114,7 +118,7 @@ public interface Forget<R, A, B>
 
       @Override
       public <F extends K1, A, B> A1<F, A1<Forget.Mu<R, K>, B>> traverse(
-          final Applicative<F> applicative,
+          final Applicative<? extends Applicative.Mu, F> applicative,
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Forget.Mu<R, K>, A> x) {
         final Forget<R, K, B> r = Forget.resolve(x)::apply;
@@ -123,10 +127,13 @@ public interface Forget<R, A, B>
     }
 
     private static class ProfunctorI<R>
-        implements Profunctor<Forget.Mu2<R>>,
-            Strong<Forget.Mu2<R>>,
-            Cochoice<Forget.Mu2<R>>,
-            Bicontravariant<Forget.Mu2<R>> {
+        implements Profunctor<ProfunctorI.Mu, Forget.Mu2<R>>,
+            Strong<ProfunctorI.Mu, Forget.Mu2<R>>,
+            Cochoice<ProfunctorI.Mu, Forget.Mu2<R>>,
+            Bicontravariant<ProfunctorI.Mu, Forget.Mu2<R>> {
+      public static final class Mu
+          implements Bicontravariant.Mu, Strong.Mu, Cochoice.Mu, Profunctor.Mu {}
+
       @Override
       public <A, B, C, D> A2<Forget.Mu2<R>, C, D> dimap(
           final Function<? super C, ? extends A> f,

@@ -51,44 +51,48 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
   }
 
   static final class Instances {
-    public static <A> Functor<Func.Mu<A>> functor() {
+    public static <A> Functor<? extends Functor.Mu, Func.Mu<A>> functor() {
       return new Func.Instances.ApplicativeI<>();
     }
 
-    public static <A> Applicative<Func.Mu<A>> applicative() {
+    public static <A> Applicative<? extends Applicative.Mu, Func.Mu<A>> applicative() {
       return new Func.Instances.ApplicativeI<>();
     }
 
-    public static Profunctor<Func.Mu2> profunctor() {
+    public static Profunctor<? extends Profunctor.Mu, Func.Mu2> profunctor() {
       return ProfunctorI.INSTANCE;
     }
 
-    public static Strong<Func.Mu2> strong() {
+    public static Strong<? extends Strong.Mu, Func.Mu2> strong() {
       return ProfunctorI.INSTANCE;
     }
 
-    public static Choice<Func.Mu2> choice() {
+    public static Choice<? extends Choice.Mu, Func.Mu2> choice() {
       return ProfunctorI.INSTANCE;
     }
 
-    public static Traversing<Func.Mu2> traversing() {
+    public static Traversing<? extends Traversing.Mu, Func.Mu2> traversing() {
       return ProfunctorI.INSTANCE;
     }
 
-    public static Mapping<Func.Mu2> mapping() {
+    public static Mapping<? extends Mapping.Mu, Func.Mu2> mapping() {
       return ProfunctorI.INSTANCE;
     }
 
-    public static <A, B> Semigroup<Func<A, B>> semigroup(Semigroup<B> resultSemigroup) {
+    public static <A, B> Semigroup<? extends Semigroup.Mu, Func<A, B>> semigroup(
+        Semigroup<? extends Semigroup.Mu, B> resultSemigroup) {
       return new SemigroupI<>(resultSemigroup);
     }
 
-    public static <A, B> Monoid<Func<A, B>> monoid(Monoid<B> resultMonoid) {
+    public static <A, B> Monoid<? extends Monoid.Mu, Func<A, B>> monoid(
+        Monoid<? extends Monoid.Mu, B> resultMonoid) {
       return new MonoidI<>(resultMonoid);
     }
 
     private static final class ApplicativeI<E>
-        implements Applicative<Func.Mu<E>>, Functor<Func.Mu<E>> {
+        implements Applicative<ApplicativeI.Mu, Func.Mu<E>>, Functor<ApplicativeI.Mu, Func.Mu<E>> {
+      public static final class Mu implements Applicative.Mu {}
+
       @Override
       public <A, B> A1<Func.Mu<E>, B> map(
           final Function<? super A, ? extends B> f, final A1<Func.Mu<E>, A> x) {
@@ -113,9 +117,12 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
 
     private static enum ProfunctorI
         implements
-            Profunctor<Func.Mu2>, Strong<Func.Mu2>, Choice<Func.Mu2>, Traversing<Func.Mu2>,
-            Mapping<Func.Mu2> {
+            Profunctor<ProfunctorI.Mu, Func.Mu2>, Strong<ProfunctorI.Mu, Func.Mu2>,
+            Choice<ProfunctorI.Mu, Func.Mu2>, Traversing<ProfunctorI.Mu, Func.Mu2>,
+            Mapping<ProfunctorI.Mu, Func.Mu2> {
       INSTANCE;
+
+      public static final class Mu implements Mapping.Mu {}
 
       @Override
       public <A, B, C, D> A2<Func.Mu2, C, D> dimap(
@@ -175,10 +182,13 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       }
     }
 
-    private static class SemigroupI<A, B> implements Semigroup<Func<A, B>> {
-      private final Semigroup<B> resultSemigroup;
+    private static class SemigroupI<Mu extends SemigroupI.Mu, A, B>
+        implements Semigroup<Mu, Func<A, B>> {
+      public static class Mu implements Semigroup.Mu {}
 
-      public SemigroupI(final Semigroup<B> resultSemigroup) {
+      private final Semigroup<? extends Semigroup.Mu, B> resultSemigroup;
+
+      public SemigroupI(final Semigroup<? extends Semigroup.Mu, B> resultSemigroup) {
         this.resultSemigroup = resultSemigroup;
       }
 
@@ -189,10 +199,13 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       }
     }
 
-    private static class MonoidI<A, B> extends SemigroupI<A, B> implements Monoid<Func<A, B>> {
-      private final Monoid<B> resultMonoid;
+    private static class MonoidI<A, B> extends SemigroupI<MonoidI.Mu, A, B>
+        implements Monoid<MonoidI.Mu, Func<A, B>> {
+      public static final class Mu extends SemigroupI.Mu implements Monoid.Mu {}
 
-      public MonoidI(final Monoid<B> resultMonoid) {
+      private final Monoid<? extends Monoid.Mu, B> resultMonoid;
+
+      public MonoidI(final Monoid<? extends Monoid.Mu, B> resultMonoid) {
         super(resultMonoid);
         this.resultMonoid = resultMonoid;
       }

@@ -1,10 +1,19 @@
 package com.github.nprindle.refract.classes;
 
+import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K2;
 import java.util.function.Function;
 
-public interface Bicontravariant<P extends K2> {
+public interface Bicontravariant<Mu extends Bicontravariant.Mu, P extends K2>
+    extends Constraint2<Mu, P> {
+  public static interface Mu extends Constraint2.Mu {}
+
+  public static <Mu extends Bicontravariant.Mu, P extends K2> Bicontravariant<Mu, P> resolve(
+      final A1<Mu, P> p) {
+    return (Bicontravariant<Mu, P>) p;
+  }
+
   <A, B, C, D> A2<P, C, D> cimap(
       final Function<? super C, ? extends A> f,
       final Function<? super D, ? extends B> g,

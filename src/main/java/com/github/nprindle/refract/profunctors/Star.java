@@ -45,28 +45,33 @@ public interface Star<F extends K1, D, C>
   }
 
   static final class Instances {
-    public static <F extends K1> Profunctor<Star.Mu2<F>> profunctor(final Functor<F> functor) {
+    public static <F extends K1> Profunctor<? extends Profunctor.Mu, Star.Mu2<F>> profunctor(
+        final Functor<? extends Functor.Mu, F> functor) {
       return new Star.Instances.StrongI<>(functor);
     }
 
-    public static <F extends K1> Strong<Star.Mu2<F>> strong(final Functor<F> functor) {
+    public static <F extends K1> Strong<? extends Strong.Mu, Star.Mu2<F>> strong(
+        final Functor<? extends Functor.Mu, F> functor) {
       return new Star.Instances.StrongI<>(functor);
     }
 
-    public static <F extends K1> Choice<Star.Mu2<F>> choice(final Applicative<F> applicative) {
+    public static <F extends K1> Choice<? extends Choice.Mu, Star.Mu2<F>> choice(
+        final Applicative<? extends Applicative.Mu, F> applicative) {
       return new Star.Instances.ChoiceI<>(applicative);
     }
 
-    public static <F extends K1> Traversing<Star.Mu2<F>> traversing(
-        final Applicative<F> applicative) {
+    public static <F extends K1> Traversing<? extends Traversing.Mu, Star.Mu2<F>> traversing(
+        final Applicative<? extends Applicative.Mu, F> applicative) {
       return new Star.Instances.ChoiceI<>(applicative);
     }
 
-    private static class StrongI<F extends K1>
-        implements Profunctor<Star.Mu2<F>>, Strong<Star.Mu2<F>> {
-      final Functor<F> functor;
+    private static class StrongI<Mu extends StrongI.Mu, F extends K1>
+        implements Profunctor<Mu, Star.Mu2<F>>, Strong<Mu, Star.Mu2<F>> {
+      public static class Mu implements Strong.Mu {}
 
-      public StrongI(final Functor<F> functor) {
+      final Functor<? extends Functor.Mu, F> functor;
+
+      public StrongI(final Functor<? extends Functor.Mu, F> functor) {
         this.functor = functor;
       }
 
@@ -96,11 +101,13 @@ public interface Star<F extends K1, D, C>
       }
     }
 
-    private static class ChoiceI<F extends K1> extends StrongI<F>
-        implements Choice<Star.Mu2<F>>, Traversing<Star.Mu2<F>> {
-      final Applicative<F> applicative;
+    private static class ChoiceI<F extends K1> extends StrongI<ChoiceI.Mu, F>
+        implements Choice<ChoiceI.Mu, Star.Mu2<F>>, Traversing<ChoiceI.Mu, Star.Mu2<F>> {
+      public static final class Mu extends StrongI.Mu implements Traversing.Mu, Choice.Mu {}
 
-      public ChoiceI(final Applicative<F> applicative) {
+      final Applicative<? extends Functor.Mu, F> applicative;
+
+      public ChoiceI(final Applicative<? extends Functor.Mu, F> applicative) {
         super(applicative);
         this.applicative = applicative;
       }
