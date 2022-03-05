@@ -2,6 +2,8 @@ package com.github.nprindle.refract;
 
 import static org.junit.Assert.assertEquals;
 
+import com.github.nprindle.refract.classes.Semigroup;
+import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.data.Identity;
 import org.junit.Test;
 
@@ -33,5 +35,19 @@ public class TestMain {
     int c = res.value();
 
     assertEquals("apply2 produces the correct value", c, a + b);
+  }
+
+  @Test
+  public void testTypeclassDefunctionalizationCompilation() throws Exception {
+    // should be able to covariantly wildcard and get a usable instsance
+    Semigroup<? extends Semigroup.Mu, Integer> s = Semigroup.first();
+    // should be able to assign to fully saturated defunctionalization symbol
+    A1<? extends Semigroup.Mu, Integer> s2 = s;
+    // should be able to resolve a fully saturated defunctionalization symbol
+    Semigroup<? extends Semigroup.Mu, Integer> s3 = Semigroup.resolve(s2);
+
+    Integer a = 5;
+    Integer b = 3;
+    assertEquals("typeclass defunctionalization resolves correctly", a, s3.append(a, b));
   }
 }
