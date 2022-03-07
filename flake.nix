@@ -1,6 +1,4 @@
 {
-  description = "Template for a flake with a devShell";
-
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs";
     flake-utils.url = "github:numtide/flake-utils";
@@ -12,21 +10,54 @@
         inherit system;
         config.allowUnfree = true;
       };
+
+      getInputs = drv:
+        builtins.concatMap (is: drv.${is} or [ ]) [ "buildInputs" "propagatedBuildInputs" "nativeBuildInputs" "propagatedNativeBuildInputs" ];
+
+      refractVersion = "0.0.1";
+      refractBazelArgs = {
+        version = refractVersion;
+        bazel = pkgs.bazel_5;
+        buildInputs = with pkgs; [
+          python3
+          openjdk11
+        ];
+      };
+
+      refract-lib = with pkgs; buildBazelPackage (refractBazelArgs // {
+        src = ./.;
+        pname = "refract";
+        bazelTarget = "//:refract";
+        fetchAttrs.sha256 = "sha256-900z/eboIlYFD0wJLkotAdQL7qOATe9UZLI3lCITNYM=";
+        buildAttrs.installPhase = ''
+          mkdir -p "$out"/target
+          install -Dm0444 bazel-bin/librefract.jar "$out"/target/librefract.jar
+        '';
+      });
     in
     {
+      defaultPackage = self.packages.${system}.refract;
+
+      packages.refract = refract-lib;
+
+      checks.refract-tests = with pkgs; buildBazelPackage (refractBazelArgs // {
+        src = ./.;
+        pname = "refract-tests";
+        bazelTarget = "//:tests";
+        fetchAttrs.sha256 = "sha256-GKyUkE+8Q7qlDa1bcHzVidGQJsaT4D9K8Qrf9kctkJo=";
+        buildAttrs.checkPhase = "exec bazel-bin/tests";
+        buildAttrs.installPhase = ''touch "$out"'';
+      });
+
       devShell = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          openjdk11
+        buildInputs = with pkgs; lib.flatten [
+          (getInputs refract-lib)
 
           # linting/formatting
           checkstyle
           google-java-format
           nixpkgs-fmt
           lefthook
-
-          # bazel
-          bazel_5
-          python3
         ];
       };
     });
