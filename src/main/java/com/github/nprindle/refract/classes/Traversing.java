@@ -7,8 +7,8 @@ import com.github.nprindle.refract.d17n.K2;
 import java.util.function.Function;
 
 public interface Traversing<Mu extends Traversing.Mu, P extends K2>
-    extends Strong<Mu, P>, Choice<Mu, P> {
-  public static interface Mu extends Strong.Mu, Choice.Mu {}
+    extends AffineTraversing<Mu, P> {
+  public static interface Mu extends AffineTraversing.Mu {}
 
   public static <Mu extends Traversing.Mu, P extends K2> Traversing<Mu, P> resolve(
       final A1<Mu, P> p) {
