@@ -45,8 +45,9 @@
         pname = "refract-tests";
         bazelTarget = "//:tests";
         fetchAttrs.sha256 = "sha256-GKyUkE+8Q7qlDa1bcHzVidGQJsaT4D9K8Qrf9kctkJo=";
-        buildAttrs.checkPhase = "exec bazel-bin/tests";
-        buildAttrs.installPhase = ''touch "$out"'';
+        buildAttrs.installPhase = ''
+          exec bazel-bin/tests > "$out"
+        '';
       });
 
       devShell = pkgs.mkShell {
