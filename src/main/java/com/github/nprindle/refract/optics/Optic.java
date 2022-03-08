@@ -18,6 +18,6 @@ public interface Optic<Constraint extends C2.Mu, S, T, A, B> {
    * representing a constraint of kind {@code C2} on some type {@code P} of kind {@code K2}, usually
    * some sort of profunctor.
    */
-  <C extends Constraint, P extends K2> A2<P, S, T> runOptic(
-      final A1<C, P> dict, final A2<P, A, B> rel);
+  <P extends K2> A2<P, S, T> runOptic(
+      final A1<? extends Constraint, P> dict, final A2<P, A, B> rel);
 }
