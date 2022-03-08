@@ -66,6 +66,11 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
       return new Const.Instances.FunctorI<>();
     }
 
+    public static <C> Applicative<? extends Applicative.Mu, Const.Mu<C>> applicative(
+        final Monoid<? extends Monoid.Mu, C> monoid) {
+      return new Const.Instances.ApplicativeI<>(monoid);
+    }
+
     public static <C> Contravariant<? extends Contravariant.Mu, Const.Mu<C>> contravariant() {
       return new Const.Instances.FunctorI<>();
     }
@@ -82,12 +87,12 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
       return Const.Instances.BifunctorI.INSTANCE;
     }
 
-    private static class FunctorI<C>
-        implements Functor<FunctorI.Mu, Const.Mu<C>>,
-            Contravariant<FunctorI.Mu, Const.Mu<C>>,
-            Foldable<FunctorI.Mu, Const.Mu<C>>,
-            Traversable<FunctorI.Mu, Const.Mu<C>> {
-      public static final class Mu implements Traversable.Mu, Contravariant.Mu {}
+    private static class FunctorI<Mu extends FunctorI.Mu, C>
+        implements Functor<Mu, Const.Mu<C>>,
+            Contravariant<Mu, Const.Mu<C>>,
+            Foldable<Mu, Const.Mu<C>>,
+            Traversable<Mu, Const.Mu<C>> {
+      public static class Mu implements Traversable.Mu, Contravariant.Mu {}
 
       @Override
       public <A, B> A1<Const.Mu<C>, B> map(
@@ -115,6 +120,28 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
           final Function<? super A, ? extends A1<F, B>> f,
           final A1<Const.Mu<C>, A> x) {
         return applicative.pure(Const.of(Const.get(x)));
+      }
+    }
+
+    private static final class ApplicativeI<C> extends FunctorI<ApplicativeI.Mu, C>
+        implements Applicative<ApplicativeI.Mu, Const.Mu<C>> {
+      public static final class Mu extends FunctorI.Mu implements Applicative.Mu {}
+
+      final Monoid<? extends Monoid.Mu, C> monoid;
+
+      public ApplicativeI(final Monoid<? extends Monoid.Mu, C> monoid) {
+        this.monoid = monoid;
+      }
+
+      @Override
+      public <A> A1<Const.Mu<C>, A> pure(final A x) {
+        return Const.of(this.monoid.empty());
+      }
+
+      @Override
+      public <A, B> A1<Const.Mu<C>, B> ap(
+          final A1<Const.Mu<C>, Function<? super A, ? extends B>> f, final A1<Const.Mu<C>, A> x) {
+        return Const.of(this.monoid.append(Const.get(f), Const.get(x)));
       }
     }
 

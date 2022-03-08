@@ -5,18 +5,21 @@ import com.github.nprindle.refract.classes.Bicontravariant;
 import com.github.nprindle.refract.classes.Cochoice;
 import com.github.nprindle.refract.classes.Contravariant;
 import com.github.nprindle.refract.classes.Foldable;
+import com.github.nprindle.refract.classes.Folding;
 import com.github.nprindle.refract.classes.Functor;
 import com.github.nprindle.refract.classes.Getting;
 import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Profunctor;
 import com.github.nprindle.refract.classes.Strong;
 import com.github.nprindle.refract.classes.Traversable;
+import com.github.nprindle.refract.classes.Traversing;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.A3;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.d17n.K3;
+import com.github.nprindle.refract.data.Const;
 import com.github.nprindle.refract.data.Either;
 import com.github.nprindle.refract.data.Pair;
 import java.util.function.Function;
@@ -72,24 +75,29 @@ public interface Forget<R, A, B>
     }
 
     public static <R> Profunctor<? extends Profunctor.Mu, Forget.Mu2<R>> profunctor() {
-      return new Forget.Instances.ProfunctorI<>();
+      return new Forget.Instances.GettingI<>();
     }
 
     public static <R> Strong<? extends Strong.Mu, Forget.Mu2<R>> strong() {
-      return new Forget.Instances.ProfunctorI<>();
+      return new Forget.Instances.GettingI<>();
     }
 
     public static <R> Cochoice<? extends Cochoice.Mu, Forget.Mu2<R>> cochoice() {
-      return new Forget.Instances.ProfunctorI<>();
+      return new Forget.Instances.GettingI<>();
     }
 
     public static <R>
         Bicontravariant<? extends Bicontravariant.Mu, Forget.Mu2<R>> bicontravariant() {
-      return new Forget.Instances.ProfunctorI<>();
+      return new Forget.Instances.GettingI<>();
     }
 
     public static <R> Getting<? extends Getting.Mu, Forget.Mu2<R>> getting() {
-      return new Forget.Instances.ProfunctorI<>();
+      return new Forget.Instances.GettingI<>();
+    }
+
+    public static <R> Getting<? extends Getting.Mu, Forget.Mu2<R>> choice(
+        final Monoid<? extends Monoid.Mu, R> monoid) {
+      return new Forget.Instances.FoldingI<>(monoid);
     }
 
     private static class FunctorI<R, K>
@@ -97,7 +105,7 @@ public interface Forget<R, A, B>
             Contravariant<FunctorI.Mu, Forget.Mu<R, K>>,
             Foldable<FunctorI.Mu, Forget.Mu<R, K>>,
             Traversable<FunctorI.Mu, Forget.Mu<R, K>> {
-      public static final class Mu implements Traversable.Mu, Contravariant.Mu {}
+      public static class Mu implements Traversable.Mu, Contravariant.Mu {}
 
       @Override
       public <A, B> A1<Forget.Mu<R, K>, B> map(
@@ -131,8 +139,8 @@ public interface Forget<R, A, B>
       }
     }
 
-    private static class ProfunctorI<R> implements Getting<ProfunctorI.Mu, Forget.Mu2<R>> {
-      public static final class Mu implements Getting.Mu {}
+    private static class GettingI<Mu extends GettingI.Mu, R> implements Getting<Mu, Forget.Mu2<R>> {
+      public static class Mu implements Getting.Mu {}
 
       @Override
       public <A, B, C, D> A2<Forget.Mu2<R>, C, D> dimap(
@@ -177,6 +185,44 @@ public interface Forget<R, A, B>
       public <A, B, C> A2<Forget.Mu2<R>, A, B> unright(
           final A2<Forget.Mu2<R>, Either<C, A>, Either<C, B>> p) {
         final Forget<R, A, B> r = a -> Forget.resolve(p).apply(Either.right(a));
+        return r;
+      }
+    }
+
+    private static class FoldingI<R> extends GettingI<FoldingI.Mu, R>
+        implements Folding<FoldingI.Mu, Forget.Mu2<R>> {
+      public static final class Mu extends GettingI.Mu implements Folding.Mu {}
+
+      final Monoid<? extends Monoid.Mu, R> monoid;
+
+      public FoldingI(final Monoid<? extends Monoid.Mu, R> monoid) {
+        this.monoid = monoid;
+      }
+
+      @Override
+      public <A, B, C> A2<Forget.Mu2<R>, Either<A, C>, Either<B, C>> left(
+          final A2<Forget.Mu2<R>, A, B> p) {
+        final Forget<R, Either<A, C>, Either<B, C>> r =
+            eac -> eac.either(a -> Forget.resolve(p).apply(a), c -> this.monoid.empty());
+        return r;
+      }
+
+      @Override
+      public <A, B, C> A2<Forget.Mu2<R>, Either<C, A>, Either<C, B>> right(
+          final A2<Forget.Mu2<R>, A, B> p) {
+        final Forget<R, Either<C, A>, Either<C, B>> r =
+            eca -> eca.either(c -> this.monoid.empty(), a -> Forget.resolve(p).apply(a));
+        return r;
+      }
+
+      @Override
+      public <A, B, S, T> A2<Forget.Mu2<R>, S, T> wander(
+          final Traversing.Wander<S, T, A, B> wander, final A2<Forget.Mu2<R>, A, B> p) {
+        // wander t (Forget f) = Forget (\s -> getConst (t (Const . f) s))
+        final Function<A, A1<Const.Mu<R>, B>> g = Forget.resolve(p).andThen(Const::of);
+        final Applicative<? extends Applicative.Mu, Const.Mu<R>> applicative =
+            Const.Instances.applicative(this.monoid);
+        final Forget<R, S, T> r = s -> Const.get(wander.wander(applicative, g, s));
         return r;
       }
     }
