@@ -15,4 +15,8 @@ public interface C1<Mu extends C1.Mu, F extends K1> extends A1<Mu, F> {
   public static <F extends K1, Mu extends C1.Mu> C1<Mu, F> resolve(final A1<Mu, F> p) {
     return (C1<Mu, F>) p;
   }
+
+  public static <F extends K1> C1<? extends C1.Mu, F> dict() {
+    return new C1<C1.Mu, F>() {};
+  }
 }
