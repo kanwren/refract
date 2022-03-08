@@ -4,6 +4,7 @@ import com.github.nprindle.refract.classes.Bifunctor;
 import com.github.nprindle.refract.classes.Choice;
 import com.github.nprindle.refract.classes.Costrong;
 import com.github.nprindle.refract.classes.Profunctor;
+import com.github.nprindle.refract.classes.Reviewing;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.A3;
@@ -63,12 +64,12 @@ public interface Recall<R, A, B>
       return new Recall.Instances.ProfunctorI<>();
     }
 
-    private static class ProfunctorI<R>
-        implements Profunctor<ProfunctorI.Mu, Recall.Mu2<R>>,
-            Choice<ProfunctorI.Mu, Recall.Mu2<R>>,
-            Costrong<ProfunctorI.Mu, Recall.Mu2<R>>,
-            Bifunctor<ProfunctorI.Mu, Recall.Mu2<R>> {
-      public static final class Mu implements Profunctor.Mu, Choice.Mu, Costrong.Mu, Bifunctor.Mu {}
+    public static <R> Reviewing<? extends Reviewing.Mu, Recall.Mu2<R>> reviewing() {
+      return new Recall.Instances.ProfunctorI<>();
+    }
+
+    private static class ProfunctorI<R> implements Reviewing<ProfunctorI.Mu, Recall.Mu2<R>> {
+      public static final class Mu implements Reviewing.Mu {}
 
       @Override
       public <A, B, C, D> A2<Recall.Mu2<R>, C, D> dimap(

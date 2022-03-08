@@ -1,5 +1,6 @@
 package com.github.nprindle.refract.profunctors;
 
+import com.github.nprindle.refract.classes.AffineTraversing;
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Choice;
 import com.github.nprindle.refract.classes.Functor;
@@ -71,6 +72,10 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       return ProfunctorI.INSTANCE;
     }
 
+    public static AffineTraversing<? extends AffineTraversing.Mu, Func.Mu2> affineTraversing() {
+      return ProfunctorI.INSTANCE;
+    }
+
     public static Traversing<? extends Traversing.Mu, Func.Mu2> traversing() {
       return ProfunctorI.INSTANCE;
     }
@@ -115,11 +120,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       }
     }
 
-    private static enum ProfunctorI
-        implements
-            Profunctor<ProfunctorI.Mu, Func.Mu2>, Strong<ProfunctorI.Mu, Func.Mu2>,
-            Choice<ProfunctorI.Mu, Func.Mu2>, Traversing<ProfunctorI.Mu, Func.Mu2>,
-            Mapping<ProfunctorI.Mu, Func.Mu2> {
+    private static enum ProfunctorI implements Mapping<ProfunctorI.Mu, Func.Mu2> {
       INSTANCE;
 
       public static final class Mu implements Mapping.Mu {}

@@ -6,6 +6,7 @@ import com.github.nprindle.refract.classes.Cochoice;
 import com.github.nprindle.refract.classes.Contravariant;
 import com.github.nprindle.refract.classes.Foldable;
 import com.github.nprindle.refract.classes.Functor;
+import com.github.nprindle.refract.classes.Getting;
 import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Profunctor;
 import com.github.nprindle.refract.classes.Strong;
@@ -87,6 +88,10 @@ public interface Forget<R, A, B>
       return new Forget.Instances.ProfunctorI<>();
     }
 
+    public static <R> Getting<? extends Getting.Mu, Forget.Mu2<R>> getting() {
+      return new Forget.Instances.ProfunctorI<>();
+    }
+
     private static class FunctorI<R, K>
         implements Functor<FunctorI.Mu, Forget.Mu<R, K>>,
             Contravariant<FunctorI.Mu, Forget.Mu<R, K>>,
@@ -126,13 +131,8 @@ public interface Forget<R, A, B>
       }
     }
 
-    private static class ProfunctorI<R>
-        implements Profunctor<ProfunctorI.Mu, Forget.Mu2<R>>,
-            Strong<ProfunctorI.Mu, Forget.Mu2<R>>,
-            Cochoice<ProfunctorI.Mu, Forget.Mu2<R>>,
-            Bicontravariant<ProfunctorI.Mu, Forget.Mu2<R>> {
-      public static final class Mu
-          implements Bicontravariant.Mu, Strong.Mu, Cochoice.Mu, Profunctor.Mu {}
+    private static class ProfunctorI<R> implements Getting<ProfunctorI.Mu, Forget.Mu2<R>> {
+      public static final class Mu implements Getting.Mu {}
 
       @Override
       public <A, B, C, D> A2<Forget.Mu2<R>, C, D> dimap(

@@ -1,5 +1,6 @@
 package com.github.nprindle.refract.profunctors;
 
+import com.github.nprindle.refract.classes.AffineTraversing;
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Choice;
 import com.github.nprindle.refract.classes.Functor;
@@ -57,6 +58,12 @@ public interface Star<F extends K1, D, C>
 
     public static <F extends K1> Choice<? extends Choice.Mu, Star.Mu2<F>> choice(
         final Applicative<? extends Applicative.Mu, F> applicative) {
+      return new Star.Instances.ChoiceI<>(applicative);
+    }
+
+    public static <F extends K1>
+        AffineTraversing<? extends AffineTraversing.Mu, Star.Mu2<F>> affineTraversing(
+            final Applicative<? extends Applicative.Mu, F> applicative) {
       return new Star.Instances.ChoiceI<>(applicative);
     }
 
