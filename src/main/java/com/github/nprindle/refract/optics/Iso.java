@@ -8,7 +8,7 @@ import com.github.nprindle.refract.profunctors.Coexp;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-interface Iso<S, T, A, B> extends Optic<Profunctor.Mu, S, T, A, B> {
+public interface Iso<S, T, A, B> extends Optic<Profunctor.Mu, S, T, A, B> {
   static <S, T, A, B> Iso<S, T, A, B> iso(
       final Function<? super S, ? extends A> fw, final Function<? super B, ? extends T> bw) {
     return new Iso<S, T, A, B>() {

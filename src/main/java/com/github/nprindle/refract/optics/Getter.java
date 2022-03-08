@@ -7,7 +7,7 @@ import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.profunctors.Forget;
 import java.util.function.Function;
 
-interface Getter<S, A> extends Optic<Getting.Mu, S, S, A, A> {
+public interface Getter<S, A> extends Optic<Getting.Mu, S, S, A, A> {
   static <S, A> Getter<S, A> to(Function<? super S, ? extends A> getter) {
     return new Getter<S, A>() {
       @Override

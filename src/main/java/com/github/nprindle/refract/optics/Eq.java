@@ -6,7 +6,7 @@ import com.github.nprindle.refract.d17n.C2;
 import com.github.nprindle.refract.d17n.K2;
 import java.util.function.Function;
 
-interface Eq<S, T, A, B> extends Optic<C2.Mu, S, T, A, B> {
+public interface Eq<S, T, A, B> extends Optic<C2.Mu, S, T, A, B> {
   static <A, B> Eq<A, B, A, B> refl() {
     return new Eq<A, B, A, B>() {
       @Override

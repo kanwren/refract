@@ -7,7 +7,7 @@ import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.profunctors.Recall;
 import java.util.function.Function;
 
-interface Review<T, B> extends Optic<Reviewing.Mu, T, T, B, B> {
+public interface Review<T, B> extends Optic<Reviewing.Mu, T, T, B, B> {
   static <T, B> Review<T, B> unto(final Function<? super B, ? extends T> reviewer) {
     return new Review<T, B>() {
       @Override
