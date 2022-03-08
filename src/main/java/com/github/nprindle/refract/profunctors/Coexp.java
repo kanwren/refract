@@ -44,6 +44,29 @@ public interface Coexp<S, T, B, A>
 
   <R> R runCoexp(final BiFunction<? super Function<S, A>, ? super Function<B, T>, ? extends R> f);
 
+  default Coexp<B, A, S, T> flip() {
+    final Coexp<S, T, B, A> orig = this;
+    return new Coexp<B, A, S, T>() {
+      @Override
+      public <R> R runCoexp(
+          final BiFunction<? super Function<B, T>, ? super Function<S, A>, ? extends R> k) {
+        return orig.runCoexp((sa, bt) -> k.apply(bt, sa));
+      }
+    };
+  }
+
+  static <B, A> Coexp<B, A, A, B> identity() {
+    return new Coexp<B, A, A, B>() {
+      @Override
+      public <R> R runCoexp(
+          final BiFunction<? super Function<B, B>, ? super Function<A, A>, ? extends R> k) {
+        final Function<B, B> bId = b -> b;
+        final Function<A, A> aId = a -> a;
+        return k.apply(bId, aId);
+      }
+    };
+  }
+
   static final class Instances {
     public static <S, T> Profunctor<? extends Profunctor.Mu, Coexp.Mu2<S, T>> profunctor() {
       return new Coexp.Instances.ProfunctorI<>();
