@@ -2,11 +2,12 @@ package com.github.nprindle.refract.classes;
 
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
+import com.github.nprindle.refract.d17n.C2;
 import com.github.nprindle.refract.d17n.K2;
 import java.util.function.Function;
 
-public interface Profunctor<Mu extends Profunctor.Mu, P extends K2> extends Constraint2<Mu, P> {
-  public static interface Mu extends Constraint2.Mu {}
+public interface Profunctor<Mu extends Profunctor.Mu, P extends K2> extends C2<Mu, P> {
+  public static interface Mu extends C2.Mu {}
 
   public static <Mu extends Profunctor.Mu, P extends K2> Profunctor<Mu, P> resolve(
       final A1<Mu, P> p) {

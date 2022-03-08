@@ -1,9 +1,10 @@
 package com.github.nprindle.refract.classes;
 
 import com.github.nprindle.refract.d17n.A1;
+import com.github.nprindle.refract.d17n.C0;
 
-public interface Semigroup<Mu extends Semigroup.Mu, T> extends Constraint0<Mu, T> {
-  public static interface Mu extends Constraint0.Mu {}
+public interface Semigroup<Mu extends Semigroup.Mu, T> extends C0<Mu, T> {
+  public static interface Mu extends C0.Mu {}
 
   public static <Mu extends Semigroup.Mu, T> Semigroup<Mu, T> resolve(final A1<Mu, T> p) {
     return (Semigroup<Mu, T>) p;
