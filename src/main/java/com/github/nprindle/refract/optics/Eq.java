@@ -7,6 +7,15 @@ import com.github.nprindle.refract.d17n.K2;
 import java.util.function.Function;
 
 public interface Eq<S, T, A, B> extends Optic<C2.Mu, S, T, A, B> {
+  static <S, T, A, B> Eq<S, T, A, B> fromOptic(final Optic<? super C2.Mu, S, T, A, B> optic) {
+    return new Eq<S, T, A, B>() {
+      public <P extends K2> A2<P, S, T> runOptic(
+          final A1<? extends C2.Mu, P> dict, final A2<P, A, B> rel) {
+        return optic.runOptic(dict, rel);
+      }
+    };
+  }
+
   static <A, B> Eq<A, B, A, B> refl() {
     return new Eq<A, B, A, B>() {
       @Override

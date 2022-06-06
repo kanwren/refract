@@ -8,6 +8,15 @@ import com.github.nprindle.refract.profunctors.Recall;
 import java.util.function.Function;
 
 public interface Review<T, B> extends Optic<Reviewing.Mu, T, T, B, B> {
+  static <T, B> Review<T, B> fromOptic(final Optic<? super Reviewing.Mu, T, T, B, B> optic) {
+    return new Review<T, B>() {
+      public <P extends K2> A2<P, T, T> runOptic(
+          final A1<? extends Reviewing.Mu, P> dict, final A2<P, B, B> rel) {
+        return optic.runOptic(dict, rel);
+      }
+    };
+  }
+
   static <T, B> Review<T, B> unto(final Function<? super B, ? extends T> reviewer) {
     return new Review<T, B>() {
       @Override

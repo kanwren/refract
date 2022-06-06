@@ -10,6 +10,7 @@ import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
+import com.github.nprindle.refract.optics.Lens;
 import java.util.function.Function;
 
 public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
@@ -139,6 +140,16 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
           final A2<Pair.Mu2, A, B> x) {
         return Pair.resolve(x).mapBoth(f, g);
       }
+    }
+  }
+
+  public static final class Optics {
+    public static <A, B, C> Lens<Pair<A, C>, Pair<B, C>, A, B> first() {
+      throw new Error("not implemented"); // TODO
+    }
+
+    public static <A, B, C> Lens<Pair<A, B>, Pair<A, C>, B, C> second() {
+      throw new Error("not implemented"); // TODO
     }
   }
 }

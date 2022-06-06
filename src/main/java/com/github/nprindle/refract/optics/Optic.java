@@ -20,4 +20,16 @@ public interface Optic<Constraint extends C2.Mu, S, T, A, B> {
    */
   <P extends K2> A2<P, S, T> runOptic(
       final A1<? extends Constraint, P> dict, final A2<P, A, B> rel);
+
+  default <Constraint2 extends Constraint, C, D> Optic<Constraint2, S, T, C, D> o(
+      final Optic<? super Constraint2, A, B, C, D> r) {
+    final Optic<Constraint, S, T, A, B> l = this;
+    return new Optic<Constraint2, S, T, C, D>() {
+      @Override
+      public <P extends K2> A2<P, S, T> runOptic(
+          final A1<? extends Constraint2, P> dict, final A2<P, C, D> rel) {
+        return l.runOptic(dict, r.runOptic(dict, rel));
+      }
+    };
+  }
 }

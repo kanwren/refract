@@ -10,6 +10,7 @@ import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
+import com.github.nprindle.refract.optics.Prism;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -273,5 +274,15 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
 
   public static <A, B> Either<A, B> right(B value) {
     return new Either.Right<>(value);
+  }
+
+  public static final class Optics {
+    public static <A, B, C> Prism<Either<A, C>, Either<B, C>, A, B> left() {
+      throw new Error("not implemented"); // TODO
+    }
+
+    public static <A, B, C> Prism<Either<A, B>, Either<A, C>, B, C> right() {
+      throw new Error("not implemented"); // TODO
+    }
   }
 }

@@ -4,7 +4,12 @@ import static org.junit.Assert.assertEquals;
 
 import com.github.nprindle.refract.classes.Semigroup;
 import com.github.nprindle.refract.d17n.A1;
+import com.github.nprindle.refract.data.Either;
 import com.github.nprindle.refract.data.Identity;
+import com.github.nprindle.refract.data.Pair;
+import com.github.nprindle.refract.optics.AffineTraversal;
+import com.github.nprindle.refract.optics.Lens;
+import com.github.nprindle.refract.optics.Prism;
 import org.junit.Test;
 
 public class TestMain {
@@ -49,5 +54,22 @@ public class TestMain {
     Integer a = 5;
     Integer b = 3;
     assertEquals("typeclass defunctionalization resolves correctly", a, s3.append(a, b));
+  }
+
+  @Test
+  public void testOpticComposition() throws Exception {
+    Lens<
+            Pair<Either<Integer, Boolean>, String>,
+            Pair<Either<Long, Boolean>, String>,
+            Either<Integer, Boolean>,
+            Either<Long, Boolean>>
+        a = Pair.Optics.first();
+    Prism<Either<Integer, Boolean>, Either<Long, Boolean>, Integer, Long> b = Either.Optics.left();
+    AffineTraversal<
+            Pair<Either<Integer, Boolean>, String>,
+            Pair<Either<Long, Boolean>, String>,
+            Integer,
+            Long>
+        c = AffineTraversal.fromOptic(a.o(b));
   }
 }
