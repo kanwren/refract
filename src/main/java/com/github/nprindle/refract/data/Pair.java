@@ -145,11 +145,11 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
 
   public static final class Optics {
     public static <A, B, C> Lens<Pair<A, C>, Pair<B, C>, A, B> first() {
-      throw new Error("not implemented"); // TODO
+      return Lens.lens(p -> p.fst(), (p, b) -> Pair.of(b, p.snd()));
     }
 
     public static <A, B, C> Lens<Pair<A, B>, Pair<A, C>, B, C> second() {
-      throw new Error("not implemented"); // TODO
+      return Lens.lens(p -> p.snd(), (p, b) -> Pair.of(p.fst(), b));
     }
   }
 }

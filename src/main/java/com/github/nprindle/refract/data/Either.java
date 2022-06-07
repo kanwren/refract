@@ -278,11 +278,13 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
 
   public static final class Optics {
     public static <A, B, C> Prism<Either<A, C>, Either<B, C>, A, B> left() {
-      throw new Error("not implemented"); // TODO
+      return Prism.prism(
+          s -> s.either(Either::right, c -> Either.left(Either.right(c))), Either::left);
     }
 
     public static <A, B, C> Prism<Either<A, B>, Either<A, C>, B, C> right() {
-      throw new Error("not implemented"); // TODO
+      return Prism.prism(
+          s -> s.either(c -> Either.left(Either.left(c)), Either::right), Either::right);
     }
   }
 }

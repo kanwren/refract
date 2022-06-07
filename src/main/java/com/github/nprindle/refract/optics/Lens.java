@@ -5,6 +5,7 @@ import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.data.Pair;
+import com.github.nprindle.refract.data.Unit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -35,8 +36,10 @@ public interface Lens<S, T, A, B> extends Optic<Strong.Mu, S, T, A, B> {
     };
   }
 
+  static <A> Lens<A, A, Unit, Unit> united() {
+    return Lens.lens(a -> Unit.UNIT, (a, u) -> a);
+  }
+
   // TODO:
   // withLens :: Lens s t a b -> ((s -> a) -> (s -> b -> t) -> r) -> r
-  // united :: Lens' a ()
-  // lenses for pair
 }

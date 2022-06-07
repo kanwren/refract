@@ -4,6 +4,7 @@ import com.github.nprindle.refract.classes.Functor;
 import com.github.nprindle.refract.classes.Semigroup;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.K1;
+import com.github.nprindle.refract.optics.Prism;
 
 /** The empty type, with no inhabitants (modulo nulls in Java). */
 public final class Void {
@@ -41,6 +42,12 @@ public final class Void {
       public Void append(Void a, Void b) {
         return a;
       }
+    }
+  }
+
+  public static final class Optics {
+    public static <S, A> Prism<S, S, A, Void> prism() {
+      return Prism.prism(Either::left, Void::absurd);
     }
   }
 }
