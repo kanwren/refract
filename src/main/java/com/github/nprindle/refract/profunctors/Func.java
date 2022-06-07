@@ -168,7 +168,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
         final Func<S, T> r =
             s -> {
               final Function<A, A1<Identity.Mu, B>> f = Func.resolve(p).andThen(Identity::of);
-              final A1<Identity.Mu, T> t = wander.wander(Identity.Instances.applicative(), f, s);
+              final A1<Identity.Mu, T> t = wander.runWander(Identity.Instances.applicative(), f, s);
               return Identity.get(t);
             };
         return r;
@@ -178,7 +178,7 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
       public <A, B, S, T> A2<Func.Mu2, S, T> roam(
           final Roam<S, T, A, B> roam, final A2<Func.Mu2, A, B> p) {
         // ((a -> b) -> s -> t) -> (a -> b) -> (s -> t)
-        final Func<S, T> r = s -> roam.roam(Func.resolve(p), s);
+        final Func<S, T> r = s -> roam.runRoam(Func.resolve(p), s);
         return r;
       }
     }

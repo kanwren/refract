@@ -222,7 +222,7 @@ public interface Forget<R, A, B>
         final Function<A, A1<Const.Mu<R>, B>> g = Forget.resolve(p).andThen(Const::of);
         final Applicative<? extends Applicative.Mu, Const.Mu<R>> applicative =
             Const.Instances.applicative(this.monoid);
-        final Forget<R, S, T> r = s -> Const.get(wander.wander(applicative, g, s));
+        final Forget<R, S, T> r = s -> Const.get(wander.runWander(applicative, g, s));
         return r;
       }
     }

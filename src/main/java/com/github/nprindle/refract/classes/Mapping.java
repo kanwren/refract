@@ -21,8 +21,13 @@ public interface Mapping<Mu extends Mapping.Mu, P extends K2> extends Traversing
     return roam(functor::map, p);
   }
 
+  default <F extends K1, A, B> A2<P, A1<F, A>, A1<F, B>> cmapP(
+      final Contravariant<? extends Contravariant.Mu, F> contravariant, final A2<P, B, A> p) {
+    return roam(contravariant::cmap, p);
+  }
+
   @FunctionalInterface
   public static interface Roam<S, T, A, B> {
-    T roam(final Function<A, B> f, final S source);
+    T runRoam(final Function<A, B> f, final S source);
   }
 }

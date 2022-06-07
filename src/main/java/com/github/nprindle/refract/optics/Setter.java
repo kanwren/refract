@@ -8,7 +8,6 @@ import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.profunctors.Func;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public interface Setter<S, T, A, B> extends Optic<Mapping.Mu, S, T, A, B> {
@@ -23,16 +22,13 @@ public interface Setter<S, T, A, B> extends Optic<Mapping.Mu, S, T, A, B> {
     };
   }
 
-  // `BiFunction<Function<A, B>, S, T>` is equivalent to `Roam<S, T, A, B>`, but
-  // `BiFunction` is exposed here for convenience
-  static <S, T, A, B> Setter<S, T, A, B> sets(
-      final BiFunction<? super Function<? super A, ? extends B>, ? super S, ? extends T> setter) {
+  static <S, T, A, B> Setter<S, T, A, B> sets(final Mapping.Roam<S, T, A, B> roam) {
     return new Setter<S, T, A, B>() {
       @Override
       public <P extends K2> A2<P, S, T> runOptic(
           final A1<? extends Mapping.Mu, P> dict, final A2<P, A, B> rel) {
         final Mapping<? extends Mapping.Mu, P> mapping = Mapping.resolve(dict);
-        return mapping.roam((f, s) -> setter.apply(f, s), rel);
+        return mapping.roam((f, s) -> roam.runRoam(f, s), rel);
       }
     };
   }
@@ -44,7 +40,7 @@ public interface Setter<S, T, A, B> extends Optic<Mapping.Mu, S, T, A, B> {
       public <P extends K2> A2<P, A1<F, A>, A1<F, B>> runOptic(
           final A1<? extends Mapping.Mu, P> dict, final A2<P, A, B> rel) {
         final Mapping<? extends Mapping.Mu, P> mapping = Mapping.resolve(dict);
-        return mapping.roam((f, s) -> functor.map(f, s), rel);
+        return mapping.mapP(functor, rel);
       }
     };
   }
@@ -56,9 +52,13 @@ public interface Setter<S, T, A, B> extends Optic<Mapping.Mu, S, T, A, B> {
       public <P extends K2> A2<P, A1<F, A>, A1<F, B>> runOptic(
           final A1<? extends Mapping.Mu, P> dict, final A2<P, B, A> rel) {
         final Mapping<? extends Mapping.Mu, P> mapping = Mapping.resolve(dict);
-        return mapping.roam((f, s) -> contravariant.cmap(f, s), rel);
+        return mapping.cmapP(contravariant, rel);
       }
     };
+  }
+
+  default Mapping.Roam<S, T, A, B> toRoam() {
+    return (f, s) -> Func.resolve(this.runOptic(Func.Instances.mapping(), Func.from(f))).apply(s);
   }
 
   default T over(final Function<? super A, ? extends B> f, final S s) {

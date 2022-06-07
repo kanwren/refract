@@ -144,7 +144,7 @@ public interface Star<F extends K1, D, C>
       @Override
       public <A, B, S, T> A2<Star.Mu2<F>, S, T> wander(
           final Traversing.Wander<S, T, A, B> wander, final A2<Star.Mu2<F>, A, B> p) {
-        final Star<F, S, T> r = s -> wander.wander(applicative, Star.resolve(p), s);
+        final Star<F, S, T> r = s -> wander.runWander(applicative, Star.resolve(p), s);
         return r;
       }
     }
