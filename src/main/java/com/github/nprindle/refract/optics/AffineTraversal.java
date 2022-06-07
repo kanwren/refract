@@ -70,9 +70,24 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
     };
   }
 
-  default <R> R withOptional(
+  default <R> R withAffineTraversal(
       final BiFunction<? super Function<S, Either<T, A>>, ? super BiFunction<S, B, T>, R> k) {
-    throw new Error("not implemented"); // TODO
+    final UnpackAffineTraversal<A, B, A, B> trivialUnpackAffineTraversal =
+        new UnpackAffineTraversal<A, B, A, B>() {
+          @Override
+          public <R> R withUnpackAffineTraversal(
+              final BiFunction<
+                      ? super Function<A, Either<B, A>>, ? super BiFunction<A, B, B>, ? extends R>
+                  k) {
+            final Function<A, Either<B, A>> match = Either::right;
+            final BiFunction<A, B, B> setter = (a, b) -> b;
+            return k.apply(match, setter);
+          }
+        };
+    return UnpackAffineTraversal.resolve(
+            this.runOptic(
+                UnpackAffineTraversal.Instances.affineTraversing(), trivialUnpackAffineTraversal))
+        .withUnpackAffineTraversal(k);
   }
 
   default Either<T, A> matching(final S s) {
@@ -98,7 +113,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
     <R> R withUnpackAffineTraversal(
         final BiFunction<
                 ? super Function<S, Either<T, A>>, ? super BiFunction<S, B, T>, ? extends R>
-            f);
+            k);
 
     static final class Mu<A, B, S> implements K1 {}
 
@@ -148,43 +163,139 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
         return new UnpackAffineTraversal.Instances.AffineTraversingI<>();
       }
 
-      private static class AffineTraversingI<Mu extends AffineTraversingI.Mu, AR, BR>
-          implements Profunctor<Mu, UnpackAffineTraversal.Mu2<AR, BR>>,
-              Strong<Mu, UnpackAffineTraversal.Mu2<AR, BR>>,
-              Choice<Mu, UnpackAffineTraversal.Mu2<AR, BR>>,
-              AffineTraversing<Mu, UnpackAffineTraversal.Mu2<AR, BR>> {
+      private static class AffineTraversingI<Mu extends AffineTraversingI.Mu, A, B>
+          implements Profunctor<Mu, UnpackAffineTraversal.Mu2<A, B>>,
+              Strong<Mu, UnpackAffineTraversal.Mu2<A, B>>,
+              Choice<Mu, UnpackAffineTraversal.Mu2<A, B>>,
+              AffineTraversing<Mu, UnpackAffineTraversal.Mu2<A, B>> {
         public static class Mu implements AffineTraversing.Mu {}
 
         @Override
-        public <A, B, C, D> A2<UnpackAffineTraversal.Mu2<AR, BR>, C, D> dimap(
-            final Function<? super C, ? extends A> f,
-            final Function<? super B, ? extends D> g,
-            final A2<UnpackAffineTraversal.Mu2<AR, BR>, A, B> x) {
-          throw new Error("not implemented"); // TODO
+        public <S, T, S2, T2> A2<UnpackAffineTraversal.Mu2<A, B>, S2, T2> dimap(
+            final Function<? super S2, ? extends S> s2s,
+            final Function<? super T, ? extends T2> tt2,
+            final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
+          return UnpackAffineTraversal.resolve(p)
+              .withUnpackAffineTraversal(
+                  (match, setter) -> {
+                    return new UnpackAffineTraversal<A, B, S2, T2>() {
+                      @Override
+                      public <R> R withUnpackAffineTraversal(
+                          final BiFunction<
+                                  ? super Function<S2, Either<T2, A>>,
+                                  ? super BiFunction<S2, B, T2>,
+                                  ? extends R>
+                              k) {
+                        final Function<S2, Either<T2, A>> match2 =
+                            s2 -> match.apply(s2s.apply(s2)).mapLeft(tt2);
+                        final BiFunction<S2, B, T2> setter2 =
+                            (s2, b) -> tt2.apply(setter.apply(s2s.apply(s2), b));
+                        return k.apply(match2, setter2);
+                      }
+                    };
+                  });
         }
 
         @Override
-        public <A, B, C> A2<UnpackAffineTraversal.Mu2<AR, BR>, Pair<A, C>, Pair<B, C>> first(
-            final A2<UnpackAffineTraversal.Mu2<AR, BR>, A, B> p) {
-          throw new Error("not implemented"); // TODO
+        public <S, T, C> A2<UnpackAffineTraversal.Mu2<A, B>, Pair<S, C>, Pair<T, C>> first(
+            final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
+          return UnpackAffineTraversal.resolve(p)
+              .withUnpackAffineTraversal(
+                  (match, setter) -> {
+                    return new UnpackAffineTraversal<A, B, Pair<S, C>, Pair<T, C>>() {
+                      @Override
+                      public <R> R withUnpackAffineTraversal(
+                          final BiFunction<
+                                  ? super Function<Pair<S, C>, Either<Pair<T, C>, A>>,
+                                  ? super BiFunction<Pair<S, C>, B, Pair<T, C>>,
+                                  ? extends R>
+                              k) {
+                        final Function<Pair<S, C>, Either<Pair<T, C>, A>> match2 =
+                            pair -> match.apply(pair.fst()).mapLeft(t -> Pair.of(t, pair.snd()));
+                        final BiFunction<Pair<S, C>, B, Pair<T, C>> setter2 =
+                            (pair, b) -> Pair.of(setter.apply(pair.fst(), b), pair.snd());
+                        return k.apply(match2, setter2);
+                      }
+                    };
+                  });
         }
 
         @Override
-        public <A, B, C> A2<UnpackAffineTraversal.Mu2<AR, BR>, Pair<C, A>, Pair<C, B>> second(
-            final A2<UnpackAffineTraversal.Mu2<AR, BR>, A, B> p) {
-          throw new Error("not implemented"); // TODO
+        public <S, T, C> A2<UnpackAffineTraversal.Mu2<A, B>, Pair<C, S>, Pair<C, T>> second(
+            final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
+          return UnpackAffineTraversal.resolve(p)
+              .withUnpackAffineTraversal(
+                  (match, setter) -> {
+                    return new UnpackAffineTraversal<A, B, Pair<C, S>, Pair<C, T>>() {
+                      @Override
+                      public <R> R withUnpackAffineTraversal(
+                          final BiFunction<
+                                  ? super Function<Pair<C, S>, Either<Pair<C, T>, A>>,
+                                  ? super BiFunction<Pair<C, S>, B, Pair<C, T>>,
+                                  ? extends R>
+                              k) {
+                        final Function<Pair<C, S>, Either<Pair<C, T>, A>> match2 =
+                            pair -> match.apply(pair.snd()).mapLeft(t -> Pair.of(pair.fst(), t));
+                        final BiFunction<Pair<C, S>, B, Pair<C, T>> setter2 =
+                            (pair, b) -> Pair.of(pair.fst(), setter.apply(pair.snd(), b));
+                        return k.apply(match2, setter2);
+                      }
+                    };
+                  });
         }
 
         @Override
-        public <A, B, C> A2<UnpackAffineTraversal.Mu2<AR, BR>, Either<A, C>, Either<B, C>> left(
-            final A2<UnpackAffineTraversal.Mu2<AR, BR>, A, B> p) {
-          throw new Error("not implemented"); // TODO
+        public <S, T, C> A2<UnpackAffineTraversal.Mu2<A, B>, Either<S, C>, Either<T, C>> left(
+            final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
+          return UnpackAffineTraversal.resolve(p)
+              .withUnpackAffineTraversal(
+                  (match, setter) -> {
+                    return new UnpackAffineTraversal<A, B, Either<S, C>, Either<T, C>>() {
+                      @Override
+                      public <R> R withUnpackAffineTraversal(
+                          final BiFunction<
+                                  ? super Function<Either<S, C>, Either<Either<T, C>, A>>,
+                                  ? super BiFunction<Either<S, C>, B, Either<T, C>>,
+                                  ? extends R>
+                              k) {
+                        final Function<Either<S, C>, Either<Either<T, C>, A>> match2 =
+                            e ->
+                                e.either(
+                                    s -> match.apply(s).mapLeft(Either::left),
+                                    c -> Either.left(Either.right(c)));
+                        final BiFunction<Either<S, C>, B, Either<T, C>> setter2 =
+                            (e, b) -> e.either(s -> Either.left(setter.apply(s, b)), Either::right);
+                        return k.apply(match2, setter2);
+                      }
+                    };
+                  });
         }
 
         @Override
-        public <A, B, C> A2<UnpackAffineTraversal.Mu2<AR, BR>, Either<C, A>, Either<C, B>> right(
-            final A2<UnpackAffineTraversal.Mu2<AR, BR>, A, B> p) {
-          throw new Error("not implemented"); // TODO
+        public <S, T, C> A2<UnpackAffineTraversal.Mu2<A, B>, Either<C, S>, Either<C, T>> right(
+            final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
+          return UnpackAffineTraversal.resolve(p)
+              .withUnpackAffineTraversal(
+                  (match, setter) -> {
+                    return new UnpackAffineTraversal<A, B, Either<C, S>, Either<C, T>>() {
+                      @Override
+                      public <R> R withUnpackAffineTraversal(
+                          final BiFunction<
+                                  ? super Function<Either<C, S>, Either<Either<C, T>, A>>,
+                                  ? super BiFunction<Either<C, S>, B, Either<C, T>>,
+                                  ? extends R>
+                              k) {
+                        final Function<Either<C, S>, Either<Either<C, T>, A>> match2 =
+                            e ->
+                                e.either(
+                                    c -> Either.left(Either.left(c)),
+                                    s -> match.apply(s).mapLeft(Either::right));
+                        final BiFunction<Either<C, S>, B, Either<C, T>> setter2 =
+                            (e, b) -> e.either(Either::left, s -> Either.right(setter.apply(s, b)));
+                        return k.apply(match2, setter2);
+                      }
+                    };
+                  });
         }
       }
     }
