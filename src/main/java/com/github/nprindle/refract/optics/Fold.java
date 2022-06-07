@@ -15,4 +15,17 @@ public interface Fold<S, A> extends Optic<Folding.Mu, S, S, A, A> {
       }
     };
   }
+
+  // TODO:
+  // folded :: Foldable f => Fold (f a) a
+  // folding :: (forall f. Applicative f => (a -> f a) -> s -> f ()) -> Fold s a
+  // foldMapOf :: Fold s a -> Monoid m => (a -> m) -> s -> m
+  // traverseOf_ :: Applicative f => Fold s a -> (a -> f r) -> s -> f ()
+  // preview :: Fold s a -> s -> Maybe a
+  // has :: Fold s a -> s -> Bool
+  // newtype Foldr a = Foldr { runCons :: forall r. (a -> r -> r) -> r -> r }
+  // foldrOf :: Fold s a -> (a -> r -> r) -> r -> s -> r
+  // toListOf :: Fold s a -> s -> [a]
+  // lengthOf :: Fold s a -> s -> Int
+  // foldBackwards :: Fold s a -> Fold s a
 }

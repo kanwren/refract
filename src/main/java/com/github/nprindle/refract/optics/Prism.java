@@ -38,5 +38,5 @@ public interface Prism<S, T, A, B> extends Optic<Choice.Mu, S, T, A, B> {
   // withPrism :: Prism s t a b -> ((s -> Either t a) -> (b -> t) -> r) -> r
   // only :: Eq a => a -> Prism' a ()
   // below :: Traversable f => Prism' s a -> Prism' (f s) (f a)
-  // prisms for Either, (_Void :: Prism s s a Void)
+  // prisms for Either, Optional, (_Void :: Prism s s a Void)
 }

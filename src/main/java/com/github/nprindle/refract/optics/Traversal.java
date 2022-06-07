@@ -16,4 +16,11 @@ public interface Traversal<S, T, A, B> extends Optic<Traversing.Mu, S, T, A, B> 
       }
     };
   }
+
+  // TODO:
+  // traversing :: (forall f. Applicative f => (a -> f b) -> s -> f t) -> Traversal s t a b
+  // traversed :: Traversable t => Traversal (t a) (t b) a b
+  // traverseOf :: Traversal s t a b -> Applicative f => (a -> f b) -> s -> f t
+  // newtype Backwards f a = Backwards { forwards :: f a }
+  // backwards :: Traversal s t a b -> Traversal s t a b
 }

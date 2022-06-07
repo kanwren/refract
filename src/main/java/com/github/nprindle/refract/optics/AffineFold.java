@@ -16,4 +16,8 @@ public interface AffineFold<S, A> extends Optic<AffineFolding.Mu, S, S, A, A> {
       }
     };
   }
+
+  // TODO:
+  // ofolding :: (s -> Maybe a) -> AffineFold s a
+  // filtered :: (a -> Bool) -> AffineFold a a
 }

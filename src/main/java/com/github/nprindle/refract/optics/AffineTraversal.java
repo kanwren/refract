@@ -16,4 +16,12 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
       }
     };
   }
+
+  // TODO:
+  // optional :: (s -> Either t a) -> (s -> b -> t) -> Optional s t a b
+  // optional' :: (s -> Maybe a) -> (s -> b -> s) -> Optional s s a b
+  // withOptional :: Optional s t a b -> ((s -> Either t a) -> (s -> b -> t) -> r) -> r
+  // matching :: Optional s t a b -> s -> Either t a
+  // is :: Optional s t a b -> s -> Bool
+  // ignored :: Optional' s a
 }

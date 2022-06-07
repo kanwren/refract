@@ -19,7 +19,14 @@ public interface Setter<S, T, A, B> extends Optic<Mapping.Mu, S, T, A, B> {
     };
   }
 
-  default T over(Function<? super A, ? extends B> f, S s) {
+  default T over(final Function<? super A, ? extends B> f, final S s) {
     return Func.resolve(this.runOptic(Func.Instances.mapping(), Func.from(f))).apply(s);
   }
+
+  // TODO:
+  // sets :: ((a -> b) -> s -> t) -> Setter s t a b
+  // mapped :: Functor f => Setter (f a) (f b) a b
+  // contramapped :: Contravariant f => Setter (f a) (f b) b a
+  // over :: Setter s t a b -> (a -> b) -> s -> t
+  // set :: Setter s t a b -> b -> s -> t
 }
