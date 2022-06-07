@@ -12,6 +12,10 @@ import com.github.nprindle.refract.d17n.K4;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
+/**
+ * A coexponential, which may be viewed here as a CPS-transformed bundle of a pair of functions
+ * {@code s -> a} and {@code b -> t}
+ */
 @FunctionalInterface
 public interface Coexp<S, T, B, A>
     extends A1<Coexp.Mu<S, T, B>, A>,

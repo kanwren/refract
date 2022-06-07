@@ -90,6 +90,17 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
         .withUnpackAffineTraversal(k);
   }
 
+  default AffineTraversal.Bundle<S, T, A, B> bundle() {
+    final AffineTraversal.Bundle.FlippedBundle<A, B, A, B> trivialFlippedBundle =
+        new AffineTraversal.Bundle.FlippedBundle<>(Either::right, (a, b) -> b);
+    final AffineTraversal.Bundle.FlippedBundle<A, B, S, T> flippedBundle =
+        AffineTraversal.Bundle.FlippedBundle.resolve(
+            this.runOptic(
+                AffineTraversal.Bundle.FlippedBundle.Instances.affineTraversing(),
+                trivialFlippedBundle));
+    return flippedBundle.flip();
+  }
+
   default Either<T, A> matching(final S s) {
     final Match<A, A, B> trivialMatch = Either::right;
     return Match.resolve(this.runOptic(Match.Instances.affineTraversing(), trivialMatch)).apply(s);
@@ -103,6 +114,154 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
     return AffineTraversal.simpleAffineTraversal(s -> Optional.empty(), (s, b) -> s);
   }
 
+  /**
+   * A bundle of functions given by an {@code AffineTraversal}. This can also be seen as {@code
+   * UnpackAffineTraversal} without a CPS transform.
+   */
+  public static final class Bundle<S, T, A, B> {
+    public final Function<S, Either<T, A>> match;
+    public final BiFunction<S, B, T> setter;
+
+    public Bundle(Function<S, Either<T, A>> match, BiFunction<S, B, T> setter) {
+      this.match = match;
+      this.setter = setter;
+    }
+
+    // Like 'Bundle', but with the arguments in an order that's amenable to the
+    // profunctor transformation
+    private static final class FlippedBundle<A, B, S, T>
+        implements A1<FlippedBundle.Mu<A, B, S>, T>,
+            A2<FlippedBundle.Mu2<A, B>, S, T>,
+            A3<FlippedBundle.Mu3<A>, B, S, T>,
+            A4<FlippedBundle.Mu4, A, B, S, T> {
+      static final class Mu<A, B, S> implements K1 {}
+
+      static final class Mu2<A, B> implements K2 {}
+
+      static final class Mu3<A> implements K3 {}
+
+      static final class Mu4 implements K4 {}
+
+      static <A, B, S, T> FlippedBundle<A, B, S, T> resolve(
+          final A1<FlippedBundle.Mu<A, B, S>, T> p) {
+        return (FlippedBundle<A, B, S, T>) p;
+      }
+
+      static <A, B, S, T> FlippedBundle<A, B, S, T> resolve(
+          final A2<FlippedBundle.Mu2<A, B>, S, T> p) {
+        return (FlippedBundle<A, B, S, T>) p;
+      }
+
+      static <A, B, S, T> FlippedBundle<A, B, S, T> resolve(
+          final A3<FlippedBundle.Mu3<A>, B, S, T> p) {
+        return (FlippedBundle<A, B, S, T>) p;
+      }
+
+      static <A, B, S, T> FlippedBundle<A, B, S, T> resolve(
+          final A4<FlippedBundle.Mu4, A, B, S, T> p) {
+        return (FlippedBundle<A, B, S, T>) p;
+      }
+
+      public final Function<S, Either<T, A>> match;
+      public final BiFunction<S, B, T> setter;
+
+      public FlippedBundle(Function<S, Either<T, A>> match, BiFunction<S, B, T> setter) {
+        this.match = match;
+        this.setter = setter;
+      }
+
+      public Bundle<S, T, A, B> flip() {
+        return new Bundle<>(this.match, this.setter);
+      }
+
+      public static final class Instances {
+        public static <A, B>
+            Profunctor<? extends Profunctor.Mu, FlippedBundle.Mu2<A, B>> profunctor() {
+          return new FlippedBundle.Instances.AffineTraversingI<>();
+        }
+
+        public static <A, B> Strong<? extends Strong.Mu, FlippedBundle.Mu2<A, B>> strong() {
+          return new FlippedBundle.Instances.AffineTraversingI<>();
+        }
+
+        public static <A, B> Choice<? extends Choice.Mu, FlippedBundle.Mu2<A, B>> choice() {
+          return new FlippedBundle.Instances.AffineTraversingI<>();
+        }
+
+        public static <A, B>
+            AffineTraversing<? extends AffineTraversing.Mu, FlippedBundle.Mu2<A, B>>
+                affineTraversing() {
+          return new FlippedBundle.Instances.AffineTraversingI<>();
+        }
+
+        private static class AffineTraversingI<Mu extends AffineTraversingI.Mu, A, B>
+            implements Profunctor<Mu, FlippedBundle.Mu2<A, B>>,
+                Strong<Mu, FlippedBundle.Mu2<A, B>>,
+                Choice<Mu, FlippedBundle.Mu2<A, B>>,
+                AffineTraversing<Mu, FlippedBundle.Mu2<A, B>> {
+          public static class Mu implements AffineTraversing.Mu {}
+
+          @Override
+          public <S, T, S2, T2> A2<FlippedBundle.Mu2<A, B>, S2, T2> dimap(
+              final Function<? super S2, ? extends S> s2s,
+              final Function<? super T, ? extends T2> tt2,
+              final A2<FlippedBundle.Mu2<A, B>, S, T> p) {
+            final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
+            return new FlippedBundle<>(
+                s2 -> fb.match.apply(s2s.apply(s2)).mapLeft(tt2),
+                (s2, b) -> tt2.apply(fb.setter.apply(s2s.apply(s2), b)));
+          }
+
+          @Override
+          public <S, T, C> A2<FlippedBundle.Mu2<A, B>, Pair<S, C>, Pair<T, C>> first(
+              final A2<FlippedBundle.Mu2<A, B>, S, T> p) {
+            final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
+            return new FlippedBundle<>(
+                pair -> fb.match.apply(pair.fst()).mapLeft(t -> Pair.of(t, pair.snd())),
+                (pair, b) -> Pair.of(fb.setter.apply(pair.fst(), b), pair.snd()));
+          }
+
+          @Override
+          public <S, T, C> A2<FlippedBundle.Mu2<A, B>, Pair<C, S>, Pair<C, T>> second(
+              final A2<FlippedBundle.Mu2<A, B>, S, T> p) {
+            final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
+            return new FlippedBundle<>(
+                pair -> fb.match.apply(pair.snd()).mapLeft(t -> Pair.of(pair.fst(), t)),
+                (pair, b) -> Pair.of(pair.fst(), fb.setter.apply(pair.snd(), b)));
+          }
+
+          @Override
+          public <S, T, C> A2<FlippedBundle.Mu2<A, B>, Either<S, C>, Either<T, C>> left(
+              final A2<FlippedBundle.Mu2<A, B>, S, T> p) {
+            final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
+            return new FlippedBundle<>(
+                e ->
+                    e.either(
+                        s -> fb.match.apply(s).mapLeft(Either::left),
+                        c -> Either.left(Either.right(c))),
+                (e, b) -> e.either(s -> Either.left(fb.setter.apply(s, b)), Either::right));
+          }
+
+          @Override
+          public <S, T, C> A2<FlippedBundle.Mu2<A, B>, Either<C, S>, Either<C, T>> right(
+              final A2<FlippedBundle.Mu2<A, B>, S, T> p) {
+            final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
+            return new FlippedBundle<>(
+                e ->
+                    e.either(
+                        c -> Either.left(Either.left(c)),
+                        s -> fb.match.apply(s).mapLeft(Either::right)),
+                (e, b) -> e.either(Either::left, s -> Either.right(fb.setter.apply(s, b))));
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * A CPS-transformed bundle of a pair of functions {@code match :: s -> Either t a} and {@code set
+   * :: s -> b -> t}, given by an {@code AffineTraversal}.
+   */
   @FunctionalInterface
   public static interface UnpackAffineTraversal<A, B, S, T>
       extends A1<UnpackAffineTraversal.Mu<A, B, S>, T>,
