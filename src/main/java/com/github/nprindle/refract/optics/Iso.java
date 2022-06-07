@@ -12,6 +12,7 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor.Mu, S, T, A, B> {
   static <S, T, A, B> Iso<S, T, A, B> fromOptic(
       final Optic<? super Profunctor.Mu, S, T, A, B> optic) {
     return new Iso<S, T, A, B>() {
+      @Override
       public <P extends K2> A2<P, S, T> runOptic(
           final A1<? extends Profunctor.Mu, P> dict, final A2<P, A, B> rel) {
         return optic.runOptic(dict, rel);

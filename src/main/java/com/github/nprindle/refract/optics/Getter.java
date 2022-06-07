@@ -10,6 +10,7 @@ import java.util.function.Function;
 public interface Getter<S, A> extends Optic<Getting.Mu, S, S, A, A> {
   static <S, A> Getter<S, A> fromOptic(final Optic<? super Getting.Mu, S, S, A, A> optic) {
     return new Getter<S, A>() {
+      @Override
       public <P extends K2> A2<P, S, S> runOptic(
           final A1<? extends Getting.Mu, P> dict, final A2<P, A, A> rel) {
         return optic.runOptic(dict, rel);

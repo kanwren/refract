@@ -9,6 +9,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
   static <S, T, A, B> AffineTraversal<S, T, A, B> fromOptic(
       final Optic<? super AffineTraversing.Mu, S, T, A, B> optic) {
     return new AffineTraversal<S, T, A, B>() {
+      @Override
       public <P extends K2> A2<P, S, T> runOptic(
           final A1<? extends AffineTraversing.Mu, P> dict, final A2<P, A, B> rel) {
         return optic.runOptic(dict, rel);
