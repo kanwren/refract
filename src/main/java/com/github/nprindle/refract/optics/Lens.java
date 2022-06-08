@@ -43,7 +43,7 @@ public interface Lens<S, T, A, B> extends Optic<Strong.Mu, S, T, A, B> {
   }
 
   default <R> R withLens(
-      final BiFunction<? super Function<S, A>, ? super BiFunction<S, B, T>, R> k) {
+      final BiFunction<? super Function<S, A>, ? super BiFunction<S, B, T>, ? extends R> k) {
     final UnpackLens<A, B, A, B> trivialUnpackLens =
         new UnpackLens<A, B, A, B>() {
           @Override

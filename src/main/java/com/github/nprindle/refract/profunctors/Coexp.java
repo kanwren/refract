@@ -46,7 +46,7 @@ public interface Coexp<S, T, B, A>
     return (Coexp<S, T, B, A>) p;
   }
 
-  <R> R runCoexp(final BiFunction<? super Function<S, A>, ? super Function<B, T>, ? extends R> f);
+  <R> R runCoexp(final BiFunction<? super Function<S, A>, ? super Function<B, T>, ? extends R> k);
 
   default Coexp<B, A, S, T> flip() {
     final Coexp<S, T, B, A> orig = this;
