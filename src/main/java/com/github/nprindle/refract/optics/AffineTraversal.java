@@ -32,7 +32,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
 
   static <S, T, A, B> AffineTraversal<S, T, A, B> affineTraversal(
       final Function<? super S, ? extends Either<T, A>> match,
-      final BiFunction<? super S, ? super B, ? extends T> setter) {
+      final BiFunction<? super S, ? super B, ? extends T> set) {
     return new AffineTraversal<S, T, A, B>() {
       @Override
       public <P extends K2> A2<P, S, T> runOptic(
@@ -41,7 +41,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             AffineTraversing.resolve(dict);
         return at.dimap(
             s -> Pair.of(s, match.apply(s)),
-            p -> p.snd().either(t -> t, b -> setter.apply(p.fst(), b)),
+            p -> p.snd().either(t -> t, b -> set.apply(p.fst(), b)),
             at.second(at.right(rel)));
       }
     };
@@ -49,7 +49,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
 
   static <S, A, B> AffineTraversal<S, S, A, B> simpleAffineTraversal(
       final Function<? super S, ? extends Optional<A>> preview,
-      final BiFunction<? super S, ? super B, ? extends S> setter) {
+      final BiFunction<? super S, ? super B, ? extends S> set) {
     return new AffineTraversal<S, S, A, B>() {
       @Override
       public <P extends K2> A2<P, S, S> runOptic(
@@ -64,7 +64,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                         .apply(s)
                         .map(x -> Either.<S, A>right(x))
                         .orElseGet(() -> Either.left(s))),
-            p -> p.snd().either(t -> t, b -> setter.apply(p.fst(), b)),
+            p -> p.snd().either(t -> t, b -> set.apply(p.fst(), b)),
             at.second(at.right(rel)));
       }
     };
@@ -80,8 +80,8 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                       ? super Function<A, Either<B, A>>, ? super BiFunction<A, B, B>, ? extends R>
                   k) {
             final Function<A, Either<B, A>> match = Either::right;
-            final BiFunction<A, B, B> setter = (a, b) -> b;
-            return k.apply(match, setter);
+            final BiFunction<A, B, B> set = (a, b) -> b;
+            return k.apply(match, set);
           }
         };
     return UnpackAffineTraversal.resolve(
@@ -120,11 +120,11 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
    */
   public static final class Bundle<S, T, A, B> {
     public final Function<S, Either<T, A>> match;
-    public final BiFunction<S, B, T> setter;
+    public final BiFunction<S, B, T> set;
 
-    public Bundle(Function<S, Either<T, A>> match, BiFunction<S, B, T> setter) {
+    public Bundle(Function<S, Either<T, A>> match, BiFunction<S, B, T> set) {
       this.match = match;
-      this.setter = setter;
+      this.set = set;
     }
 
     // Like 'Bundle', but with the arguments in an order that's amenable to the
@@ -163,15 +163,15 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
       }
 
       public final Function<S, Either<T, A>> match;
-      public final BiFunction<S, B, T> setter;
+      public final BiFunction<S, B, T> set;
 
-      public FlippedBundle(Function<S, Either<T, A>> match, BiFunction<S, B, T> setter) {
+      public FlippedBundle(Function<S, Either<T, A>> match, BiFunction<S, B, T> set) {
         this.match = match;
-        this.setter = setter;
+        this.set = set;
       }
 
       public Bundle<S, T, A, B> flip() {
-        return new Bundle<>(this.match, this.setter);
+        return new Bundle<>(this.match, this.set);
       }
 
       public static final class Instances {
@@ -209,7 +209,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
             return new FlippedBundle<>(
                 s2 -> fb.match.apply(s2s.apply(s2)).mapLeft(tt2),
-                (s2, b) -> tt2.apply(fb.setter.apply(s2s.apply(s2), b)));
+                (s2, b) -> tt2.apply(fb.set.apply(s2s.apply(s2), b)));
           }
 
           @Override
@@ -218,7 +218,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
             return new FlippedBundle<>(
                 pair -> fb.match.apply(pair.fst()).mapLeft(t -> Pair.of(t, pair.snd())),
-                (pair, b) -> Pair.of(fb.setter.apply(pair.fst(), b), pair.snd()));
+                (pair, b) -> Pair.of(fb.set.apply(pair.fst(), b), pair.snd()));
           }
 
           @Override
@@ -227,7 +227,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final FlippedBundle<A, B, S, T> fb = FlippedBundle.resolve(p);
             return new FlippedBundle<>(
                 pair -> fb.match.apply(pair.snd()).mapLeft(t -> Pair.of(pair.fst(), t)),
-                (pair, b) -> Pair.of(pair.fst(), fb.setter.apply(pair.snd(), b)));
+                (pair, b) -> Pair.of(pair.fst(), fb.set.apply(pair.snd(), b)));
           }
 
           @Override
@@ -239,7 +239,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                     e.either(
                         s -> fb.match.apply(s).mapLeft(Either::left),
                         c -> Either.left(Either.right(c))),
-                (e, b) -> e.either(s -> Either.left(fb.setter.apply(s, b)), Either::right));
+                (e, b) -> e.either(s -> Either.left(fb.set.apply(s, b)), Either::right));
           }
 
           @Override
@@ -251,7 +251,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                     e.either(
                         c -> Either.left(Either.left(c)),
                         s -> fb.match.apply(s).mapLeft(Either::right)),
-                (e, b) -> e.either(Either::left, s -> Either.right(fb.setter.apply(s, b))));
+                (e, b) -> e.either(Either::left, s -> Either.right(fb.set.apply(s, b))));
           }
         }
       }
@@ -336,7 +336,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
           return UnpackAffineTraversal.resolve(p)
               .withUnpackAffineTraversal(
-                  (match, setter) -> {
+                  (match, set) -> {
                     return new UnpackAffineTraversal<A, B, S2, T2>() {
                       @Override
                       public <R> R withUnpackAffineTraversal(
@@ -347,9 +347,9 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                               k) {
                         final Function<S2, Either<T2, A>> match2 =
                             s2 -> match.apply(s2s.apply(s2)).mapLeft(tt2);
-                        final BiFunction<S2, B, T2> setter2 =
-                            (s2, b) -> tt2.apply(setter.apply(s2s.apply(s2), b));
-                        return k.apply(match2, setter2);
+                        final BiFunction<S2, B, T2> set2 =
+                            (s2, b) -> tt2.apply(set.apply(s2s.apply(s2), b));
+                        return k.apply(match2, set2);
                       }
                     };
                   });
@@ -360,7 +360,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
           return UnpackAffineTraversal.resolve(p)
               .withUnpackAffineTraversal(
-                  (match, setter) -> {
+                  (match, set) -> {
                     return new UnpackAffineTraversal<A, B, Pair<S, C>, Pair<T, C>>() {
                       @Override
                       public <R> R withUnpackAffineTraversal(
@@ -371,9 +371,9 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                               k) {
                         final Function<Pair<S, C>, Either<Pair<T, C>, A>> match2 =
                             pair -> match.apply(pair.fst()).mapLeft(t -> Pair.of(t, pair.snd()));
-                        final BiFunction<Pair<S, C>, B, Pair<T, C>> setter2 =
-                            (pair, b) -> Pair.of(setter.apply(pair.fst(), b), pair.snd());
-                        return k.apply(match2, setter2);
+                        final BiFunction<Pair<S, C>, B, Pair<T, C>> set2 =
+                            (pair, b) -> Pair.of(set.apply(pair.fst(), b), pair.snd());
+                        return k.apply(match2, set2);
                       }
                     };
                   });
@@ -384,7 +384,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
           return UnpackAffineTraversal.resolve(p)
               .withUnpackAffineTraversal(
-                  (match, setter) -> {
+                  (match, set) -> {
                     return new UnpackAffineTraversal<A, B, Pair<C, S>, Pair<C, T>>() {
                       @Override
                       public <R> R withUnpackAffineTraversal(
@@ -395,9 +395,9 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                               k) {
                         final Function<Pair<C, S>, Either<Pair<C, T>, A>> match2 =
                             pair -> match.apply(pair.snd()).mapLeft(t -> Pair.of(pair.fst(), t));
-                        final BiFunction<Pair<C, S>, B, Pair<C, T>> setter2 =
-                            (pair, b) -> Pair.of(pair.fst(), setter.apply(pair.snd(), b));
-                        return k.apply(match2, setter2);
+                        final BiFunction<Pair<C, S>, B, Pair<C, T>> set2 =
+                            (pair, b) -> Pair.of(pair.fst(), set.apply(pair.snd(), b));
+                        return k.apply(match2, set2);
                       }
                     };
                   });
@@ -408,7 +408,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
           return UnpackAffineTraversal.resolve(p)
               .withUnpackAffineTraversal(
-                  (match, setter) -> {
+                  (match, set) -> {
                     return new UnpackAffineTraversal<A, B, Either<S, C>, Either<T, C>>() {
                       @Override
                       public <R> R withUnpackAffineTraversal(
@@ -422,9 +422,9 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                                 e.either(
                                     s -> match.apply(s).mapLeft(Either::left),
                                     c -> Either.left(Either.right(c)));
-                        final BiFunction<Either<S, C>, B, Either<T, C>> setter2 =
-                            (e, b) -> e.either(s -> Either.left(setter.apply(s, b)), Either::right);
-                        return k.apply(match2, setter2);
+                        final BiFunction<Either<S, C>, B, Either<T, C>> set2 =
+                            (e, b) -> e.either(s -> Either.left(set.apply(s, b)), Either::right);
+                        return k.apply(match2, set2);
                       }
                     };
                   });
@@ -435,7 +435,7 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
             final A2<UnpackAffineTraversal.Mu2<A, B>, S, T> p) {
           return UnpackAffineTraversal.resolve(p)
               .withUnpackAffineTraversal(
-                  (match, setter) -> {
+                  (match, set) -> {
                     return new UnpackAffineTraversal<A, B, Either<C, S>, Either<C, T>>() {
                       @Override
                       public <R> R withUnpackAffineTraversal(
@@ -449,9 +449,9 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
                                 e.either(
                                     c -> Either.left(Either.left(c)),
                                     s -> match.apply(s).mapLeft(Either::right));
-                        final BiFunction<Either<C, S>, B, Either<C, T>> setter2 =
-                            (e, b) -> e.either(Either::left, s -> Either.right(setter.apply(s, b)));
-                        return k.apply(match2, setter2);
+                        final BiFunction<Either<C, S>, B, Either<C, T>> set2 =
+                            (e, b) -> e.either(Either::left, s -> Either.right(set.apply(s, b)));
+                        return k.apply(match2, set2);
                       }
                     };
                   });
