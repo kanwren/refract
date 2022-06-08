@@ -81,6 +81,8 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
   }
 
   public static final class Instances {
+    private Instances() {}
+
     public static <A> Functor<? extends Functor.Mu, Pair.Mu<A>> functor() {
       return new Pair.Instances.FunctorI<>();
     }

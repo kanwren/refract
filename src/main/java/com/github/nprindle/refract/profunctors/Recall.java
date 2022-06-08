@@ -48,6 +48,8 @@ public interface Recall<R, A, B>
   }
 
   static final class Instances {
+    private Instances() {}
+
     public static <R> Profunctor<? extends Profunctor.Mu, Recall.Mu2<R>> profunctor() {
       return new Recall.Instances.ProfunctorI<>();
     }

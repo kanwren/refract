@@ -164,6 +164,8 @@ public interface Prism<S, T, A, B> extends Optic<Choice.Mu, S, T, A, B> {
       }
 
       public static final class Instances {
+        private Instances() {}
+
         public static <A, B>
             Profunctor<? extends Profunctor.Mu, FlippedBundle.Mu2<A, B>> profunctor() {
           return new FlippedBundle.Instances.ChoiceI<>();
@@ -256,6 +258,8 @@ public interface Prism<S, T, A, B> extends Optic<Choice.Mu, S, T, A, B> {
     }
 
     static final class Instances {
+      private Instances() {}
+
       public static <A, B> Profunctor<? extends Profunctor.Mu, UnpackPrism.Mu2<A, B>> profunctor() {
         return new UnpackPrism.Instances.ChoiceI<>();
       }

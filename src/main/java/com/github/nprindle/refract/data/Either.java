@@ -189,6 +189,8 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
   }
 
   public static final class Instances {
+    private Instances() {}
+
     public static <A> Functor<? extends Functor.Mu, Either.Mu<A>> functor() {
       return new Either.Instances.ApplicativeI<>();
     }

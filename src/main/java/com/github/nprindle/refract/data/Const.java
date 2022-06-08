@@ -63,6 +63,8 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
   }
 
   public static final class Instances {
+    private Instances() {}
+
     public static <C> Functor<? extends Functor.Mu, Const.Mu<C>> functor() {
       return new Const.Instances.FunctorI<>();
     }

@@ -53,6 +53,8 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
   }
 
   static final class Instances {
+    private Instances() {}
+
     public static <A> Functor<? extends Functor.Mu, Func.Mu<A>> functor() {
       return new Func.Instances.ApplicativeI<>();
     }

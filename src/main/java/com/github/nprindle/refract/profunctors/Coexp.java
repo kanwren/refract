@@ -72,6 +72,8 @@ public interface Coexp<S, T, B, A>
   }
 
   static final class Instances {
+    private Instances() {}
+
     public static <S, T> Profunctor<? extends Profunctor.Mu, Coexp.Mu2<S, T>> profunctor() {
       return new Coexp.Instances.ProfunctorI<>();
     }

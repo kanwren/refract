@@ -46,6 +46,8 @@ public interface Star<F extends K1, D, C>
   }
 
   static final class Instances {
+    private Instances() {}
+
     public static <F extends K1> Profunctor<? extends Profunctor.Mu, Star.Mu2<F>> profunctor(
         final Functor<? extends Functor.Mu, F> functor) {
       return new Star.Instances.StrongI<>(functor);

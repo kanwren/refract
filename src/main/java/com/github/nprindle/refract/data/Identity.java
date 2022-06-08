@@ -38,6 +38,8 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
   }
 
   public static final class Instances {
+    private Instances() {}
+
     public static final Functor<? extends Functor.Mu, Identity.Mu> functor() {
       return Identity.Instances.ApplicativeI.INSTANCE;
     }

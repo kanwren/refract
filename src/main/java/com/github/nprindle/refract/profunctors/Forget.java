@@ -59,6 +59,8 @@ public interface Forget<R, A, B>
   }
 
   static final class Instances {
+    private Instances() {}
+
     public static <R, A> Functor<? extends Functor.Mu, Forget.Mu<R, A>> functor() {
       return new Forget.Instances.FunctorI<>();
     }

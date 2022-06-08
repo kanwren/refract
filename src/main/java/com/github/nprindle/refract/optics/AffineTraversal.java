@@ -175,6 +175,8 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
       }
 
       public static final class Instances {
+        private Instances() {}
+
         public static <A, B>
             Profunctor<? extends Profunctor.Mu, FlippedBundle.Mu2<A, B>> profunctor() {
           return new FlippedBundle.Instances.AffineTraversingI<>();
@@ -303,6 +305,8 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
     }
 
     static final class Instances {
+      private Instances() {}
+
       public static <A, B>
           Profunctor<? extends Profunctor.Mu, UnpackAffineTraversal.Mu2<A, B>> profunctor() {
         return new UnpackAffineTraversal.Instances.AffineTraversingI<>();
@@ -487,6 +491,8 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
     }
 
     static final class Instances {
+      private Instances() {}
+
       public static <R> Profunctor<? extends Profunctor.Mu, Match.Mu2<R>> profunctor() {
         return new Match.Instances.AffineTraversingI<>();
       }

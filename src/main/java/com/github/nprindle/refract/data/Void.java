@@ -29,6 +29,8 @@ public final class Void {
   }
 
   public static final class Instances {
+    private Instances() {}
+
     public static Semigroup<? extends Semigroup.Mu, Void> semigroup() {
       return Void.Instances.SemigroupI.INSTANCE;
     }

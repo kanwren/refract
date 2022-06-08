@@ -133,6 +133,8 @@ public interface Lens<S, T, A, B> extends Optic<Strong.Mu, S, T, A, B> {
       }
 
       public static final class Instances {
+        private Instances() {}
+
         public static <A, B>
             Profunctor<? extends Profunctor.Mu, FlippedBundle.Mu2<A, B>> profunctor() {
           return new FlippedBundle.Instances.StrongI<>();
@@ -219,6 +221,8 @@ public interface Lens<S, T, A, B> extends Optic<Strong.Mu, S, T, A, B> {
     }
 
     static final class Instances {
+      private Instances() {}
+
       public static <A, B> Profunctor<? extends Profunctor.Mu, UnpackLens.Mu2<A, B>> profunctor() {
         return new UnpackLens.Instances.StrongI<>();
       }

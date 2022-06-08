@@ -123,6 +123,8 @@ public interface Iso<S, T, A, B> extends Optic<Profunctor.Mu, S, T, A, B> {
       }
 
       public static final class Instances {
+        private Instances() {}
+
         public static <A, B>
             Profunctor<? extends Profunctor.Mu, FlippedBundle.Mu2<A, B>> profunctor() {
           return new FlippedBundle.Instances.ProfunctorI<>();

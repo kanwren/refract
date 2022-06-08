@@ -8,6 +8,8 @@ public enum Unit {
   UNIT;
 
   public static final class Instances {
+    private Instances() {}
+
     public static Semigroup<? extends Semigroup.Mu, Unit> semigroup() {
       return Unit.Instances.MonoidI.INSTANCE;
     }
