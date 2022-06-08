@@ -36,14 +36,7 @@ public interface Traversal<S, T, A, B> extends Optic<Traversing.Mu, S, T, A, B> 
 
   static <F extends K1, A, B> Traversal<A1<F, A>, A1<F, B>, A, B> traversed(
       final Traversable<? extends Traversable.Mu, F> traversable) {
-    return new Traversal<A1<F, A>, A1<F, B>, A, B>() {
-      @Override
-      public <P extends K2> A2<P, A1<F, A>, A1<F, B>> runOptic(
-          final A1<? extends Traversing.Mu, P> dict, final A2<P, A, B> rel) {
-        final Traversing<? extends Traversing.Mu, P> traversing = Traversing.resolve(dict);
-        return traversing.traverseP(traversable, rel);
-      }
-    };
+    return traversing(Traversing.Wander.fromTraversable(traversable));
   }
 
   default Traversing.Wander<S, T, A, B> toWander() {

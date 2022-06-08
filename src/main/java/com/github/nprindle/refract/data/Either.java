@@ -12,6 +12,7 @@ import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.optics.Prism;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -233,11 +234,39 @@ public abstract class Either<A, B> implements A1<Either.Mu<A>, B>, A2<Either.Mu2
       }
 
       @Override
+      public <A, B, C> A1<Either.Mu<K>, C> apply2(
+          final BiFunction<? super A, ? super B, ? extends C> f,
+          final A1<Either.Mu<K>, A> x,
+          final A1<Either.Mu<K>, B> y) {
+        return Either.resolve(x).flatMap(a -> Either.resolve(y).mapRight(b -> f.apply(a, b)));
+      }
+
+      @Override
+      public <A, B> A1<Either.Mu<K>, B> before(
+          final A1<Either.Mu<K>, A> fx, final A1<Either.Mu<K>, B> fy) {
+        return Either.resolve(fx).flatMap(x -> Either.resolve(fy));
+      }
+
+      @Override
+      public <A, B> A1<Either.Mu<K>, A> then(
+          final A1<Either.Mu<K>, A> fx, final A1<Either.Mu<K>, B> fy) {
+        return Either.resolve(fx).flatMap(x -> Either.resolve(fy).mapRight(y -> x));
+      }
+
+      @Override
       public <M, A> M foldMap(
           final Monoid<? extends Monoid.Mu, M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Either.Mu<K>, A> x) {
         return Either.resolve(x).either(e -> monoid.empty(), f);
+      }
+
+      @Override
+      public <A, B> B foldr(
+          final BiFunction<? super A, ? super B, ? extends B> f,
+          final B z,
+          final A1<Either.Mu<K>, A> x) {
+        return Either.resolve(x).either(e -> z, a -> f.apply(a, z));
       }
 
       @Override

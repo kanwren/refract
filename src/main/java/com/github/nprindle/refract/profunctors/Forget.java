@@ -2,6 +2,7 @@ package com.github.nprindle.refract.profunctors;
 
 import com.github.nprindle.refract.classes.Applicative;
 import com.github.nprindle.refract.classes.Bicontravariant;
+import com.github.nprindle.refract.classes.Choice;
 import com.github.nprindle.refract.classes.Cochoice;
 import com.github.nprindle.refract.classes.Contravariant;
 import com.github.nprindle.refract.classes.Foldable;
@@ -22,6 +23,7 @@ import com.github.nprindle.refract.d17n.K3;
 import com.github.nprindle.refract.data.Const;
 import com.github.nprindle.refract.data.Either;
 import com.github.nprindle.refract.data.Pair;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @FunctionalInterface
@@ -95,7 +97,17 @@ public interface Forget<R, A, B>
       return new Forget.Instances.GettingI<>();
     }
 
-    public static <R> Getting<? extends Getting.Mu, Forget.Mu2<R>> choice(
+    public static <R> Choice<? extends Choice.Mu, Forget.Mu2<R>> choice(
+        final Monoid<? extends Monoid.Mu, R> monoid) {
+      return new Forget.Instances.FoldingI<>(monoid);
+    }
+
+    public static <R> Traversing<? extends Traversing.Mu, Forget.Mu2<R>> traversing(
+        final Monoid<? extends Monoid.Mu, R> monoid) {
+      return new Forget.Instances.FoldingI<>(monoid);
+    }
+
+    public static <R> Folding<? extends Folding.Mu, Forget.Mu2<R>> folding(
         final Monoid<? extends Monoid.Mu, R> monoid) {
       return new Forget.Instances.FoldingI<>(monoid);
     }
@@ -127,6 +139,14 @@ public interface Forget<R, A, B>
           final Function<? super A, ? extends M> f,
           final A1<Forget.Mu<R, K>, A> x) {
         return monoid.empty();
+      }
+
+      @Override
+      public <A, B> B foldr(
+          final BiFunction<? super A, ? super B, ? extends B> f,
+          final B z,
+          final A1<Forget.Mu<R, K>, A> x) {
+        return z;
       }
 
       @Override

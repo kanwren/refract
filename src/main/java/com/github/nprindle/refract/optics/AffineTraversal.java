@@ -460,6 +460,8 @@ public interface AffineTraversal<S, T, A, B> extends Optic<AffineTraversing.Mu, 
     }
   }
 
+  // TODO: this could just be Star<Either<_, R>, A, B> instead if that were
+  // possible to write
   @FunctionalInterface
   public static interface Match<R, A, B>
       extends Function<A, Either<B, R>>,

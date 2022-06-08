@@ -7,6 +7,7 @@ import com.github.nprindle.refract.classes.Monoid;
 import com.github.nprindle.refract.classes.Traversable;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.K1;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /** The identity functor, which is isomorphic to the underlying type (modulo subtyping in Java). */
@@ -79,11 +80,39 @@ public final class Identity<A> implements A1<Identity.Mu, A> {
       }
 
       @Override
+      public <A, B, C> A1<Identity.Mu, C> apply2(
+          final BiFunction<? super A, ? super B, ? extends C> f,
+          final A1<Identity.Mu, A> x,
+          final A1<Identity.Mu, B> y) {
+        return new Identity<>(f.apply(Identity.get(x), Identity.get(y)));
+      }
+
+      @Override
+      public <A, B> A1<Identity.Mu, B> before(
+          final A1<Identity.Mu, A> fx, final A1<Identity.Mu, B> fy) {
+        return fy;
+      }
+
+      @Override
+      public <A, B> A1<Identity.Mu, A> then(
+          final A1<Identity.Mu, A> fx, final A1<Identity.Mu, B> fy) {
+        return fx;
+      }
+
+      @Override
       public <M, A> M foldMap(
           final Monoid<? extends Monoid.Mu, M> monoid,
           final Function<? super A, ? extends M> f,
           final A1<Identity.Mu, A> x) {
         return f.apply(Identity.get(x));
+      }
+
+      @Override
+      public <A, B> B foldr(
+          final BiFunction<? super A, ? super B, ? extends B> f,
+          final B z,
+          final A1<Identity.Mu, A> x) {
+        return f.apply(Identity.get(x), z);
       }
 
       @Override

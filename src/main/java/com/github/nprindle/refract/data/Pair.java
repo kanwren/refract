@@ -11,6 +11,7 @@ import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.optics.Lens;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
@@ -114,6 +115,14 @@ public final class Pair<A, B> implements A1<Pair.Mu<A>, B>, A2<Pair.Mu2, A, B> {
           final Function<? super A, ? extends M> f,
           final A1<Pair.Mu<K>, A> x) {
         return f.apply(Pair.snd(x));
+      }
+
+      @Override
+      public <A, B> B foldr(
+          final BiFunction<? super A, ? super B, ? extends B> f,
+          final B z,
+          final A1<Pair.Mu<K>, A> x) {
+        return f.apply(Pair.snd(x), z);
       }
 
       @Override

@@ -17,6 +17,7 @@ import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.data.Either;
 import com.github.nprindle.refract.data.Identity;
 import com.github.nprindle.refract.data.Pair;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 @FunctionalInterface
@@ -117,6 +118,26 @@ public interface Func<A, B> extends Function<A, B>, A1<Func.Mu<A>, B>, A2<Func.M
         // \f g e -> f e (g e)
         final Func<E, B> g = e -> Func.resolve(f).apply(e).apply(Func.resolve(x).apply(e));
         return g;
+      }
+
+      @Override
+      public <A, B, C> A1<Func.Mu<E>, C> apply2(
+          final BiFunction<? super A, ? super B, ? extends C> f,
+          final A1<Func.Mu<E>, A> x,
+          final A1<Func.Mu<E>, B> y) {
+        final Func<E, C> g = e -> f.apply(Func.resolve(x).apply(e), Func.resolve(y).apply(e));
+        return g;
+      }
+
+      @Override
+      public <A, B> A1<Func.Mu<E>, B> before(
+          final A1<Func.Mu<E>, A> fx, final A1<Func.Mu<E>, B> fy) {
+        return fy; // NOTE: assumes that fx is not side-effectful
+      }
+
+      @Override
+      public <A, B> A1<Func.Mu<E>, A> then(final A1<Func.Mu<E>, A> fx, final A1<Func.Mu<E>, B> fy) {
+        return fx; // NOTE: assumes that fy is not side-effectful
       }
     }
 

@@ -28,6 +28,14 @@ public interface Applicative<M extends Applicative.Mu, F extends K1> extends Fun
     return ap(map(x2 -> y2 -> f.apply(x2, y2), x), y);
   }
 
+  default <A, B> A1<F, B> before(final A1<F, A> fx, final A1<F, B> fy) {
+    return this.apply2((x, y) -> y, fx, fy);
+  }
+
+  default <A, B> A1<F, A> then(final A1<F, A> fx, final A1<F, B> fy) {
+    return this.apply2((x, y) -> x, fx, fy);
+  }
+
   default Applicative<M, F> backwards() {
     final Applicative<M, F> base = this;
 

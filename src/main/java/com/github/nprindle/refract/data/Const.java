@@ -11,6 +11,7 @@ import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -112,6 +113,14 @@ public final class Const<A, B> implements A1<Const.Mu<A>, B>, A2<Const.Mu2, A, B
           final Function<? super A, ? extends M> f,
           final A1<Const.Mu<C>, A> x) {
         return monoid.empty();
+      }
+
+      @Override
+      public <A, B> B foldr(
+          final BiFunction<? super A, ? super B, ? extends B> f,
+          final B z,
+          final A1<Const.Mu<C>, A> x) {
+        return z;
       }
 
       @Override

@@ -4,6 +4,7 @@ import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.A2;
 import com.github.nprindle.refract.d17n.K1;
 import com.github.nprindle.refract.d17n.K2;
+import com.github.nprindle.refract.data.Unit;
 import java.util.function.Function;
 
 public interface Traversing<Mu extends Traversing.Mu, P extends K2>
@@ -40,6 +41,16 @@ public interface Traversing<Mu extends Traversing.Mu, P extends K2>
           return base.runWander(applicative.backwards(), f, source);
         }
       };
+    }
+
+    static <T extends K1, A, B> Wander<A1<T, A>, A1<T, B>, A, B> fromTraversable(
+        final Traversable<? extends Traversable.Mu, T> traversable) {
+      return traversable::traverse;
+    }
+
+    static <T extends K1, A, B> Wander<A1<T, A>, Unit, A, B> fromFoldable(
+        final Foldable<? extends Foldable.Mu, T> foldable) {
+      return foldable::traverse_;
     }
   }
 }
