@@ -12,12 +12,13 @@ import com.github.nprindle.refract.d17n.K2;
 import com.github.nprindle.refract.d17n.K3;
 import com.github.nprindle.refract.d17n.K4;
 import com.github.nprindle.refract.data.Either;
+import com.github.nprindle.refract.data.Unit;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 // TODO:
-// only :: Eq a => a -> Prism' a ()
 // prisms for Optional
 
 public interface Prism<S, T, A, B> extends Optic<Choice.Mu, S, T, A, B> {
@@ -96,6 +97,10 @@ public interface Prism<S, T, A, B> extends Optic<Choice.Mu, S, T, A, B> {
             Either.resolve(traversable.traverse(Either.Instances.applicative(), bundle.match, fs))
                 .fromRight(),
         fa -> traversable.map(bundle.review, fa));
+  }
+
+  static <A> Prism<A, A, Unit, Unit> nearly(final A a, final Predicate<A> pred) {
+    return Prism.simplePrism(x -> pred.test(x) ? Optional.of(Unit.UNIT) : Optional.empty(), u -> a);
   }
 
   /**
