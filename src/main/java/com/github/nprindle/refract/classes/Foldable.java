@@ -3,6 +3,7 @@ package com.github.nprindle.refract.classes;
 import com.github.nprindle.refract.d17n.A1;
 import com.github.nprindle.refract.d17n.C1;
 import com.github.nprindle.refract.d17n.K1;
+import com.github.nprindle.refract.data.Lazy;
 import com.github.nprindle.refract.data.Unit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -16,6 +17,13 @@ public interface Foldable<Mu extends Foldable.Mu, T extends K1> extends C1<Mu, T
 
   <A, B> B foldr(
       final BiFunction<? super A, ? super B, ? extends B> f, final B z, final A1<T, A> x);
+
+  default <A, B> Lazy<B> lazyFoldr(
+      final BiFunction<? super A, ? super Lazy<B>, ? extends B> f,
+      final Lazy<B> z,
+      final A1<T, A> x) {
+    return this.foldr((a, lb) -> Lazy.defer(() -> f.apply(a, lb)), z, x);
+  }
 
   default <M, A> M foldMap(
       final Monoid<? extends Monoid.Mu, M> monoid,

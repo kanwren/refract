@@ -25,7 +25,7 @@ public interface Monoid<Mu extends Monoid.Mu, T> extends Semigroup<Mu, T> {
       }
 
       @Override
-      public Optional<T> append(Optional<T> ma, Optional<T> mb) {
+      public Optional<T> append(final Optional<T> ma, final Optional<T> mb) {
         return ma.map(a -> Optional.of(mb.map(b -> semigroup.append(a, b)).orElse(a))).orElse(mb);
       }
     };
