@@ -28,7 +28,8 @@ public interface Fold<S, A> extends Optic<Folding.Mu, S, S, A, A> {
     };
   }
 
-  static <S, A> Fold<S, A> folding(final Traversing.Wander<S, Unit, A, A> wander) {
+  // `folding`, but in terms of a `Wander` of the correct shape
+  static <S, A> Fold<S, A> traversing_(final Traversing.Wander<S, Unit, A, A> wander) {
     return new Fold<S, A>() {
       @Override
       public <P extends K2> A2<P, S, S> runOptic(
@@ -39,9 +40,31 @@ public interface Fold<S, A> extends Optic<Folding.Mu, S, S, A, A> {
     };
   }
 
+  static <F extends K1, S, A> Fold<S, A> folding(
+      final Foldable<? extends Foldable.Mu, F> foldable,
+      final Function<? super S, ? extends A1<F, A>> f) {
+    return new Fold<S, A>() {
+      @Override
+      public <P extends K2> A2<P, S, S> runOptic(
+          final A1<? extends Folding.Mu, P> dict, final A2<P, A, A> rel) {
+        final Folding<? extends Folding.Mu, P> folding = Folding.resolve(dict);
+        return folding.rphantom(folding.lmap(f, folding.traverseP_(foldable, rel)));
+      }
+    };
+  }
+
   static <F extends K1, A> Fold<A1<F, A>, A> folded(
       final Foldable<? extends Foldable.Mu, F> foldable) {
-    return folding(Traversing.Wander.fromFoldable(foldable));
+    // return folding(foldable, x -> x);
+    // return traversing_(Traversing.Wander.fromFoldable(foldable));
+    return new Fold<A1<F, A>, A>() {
+      @Override
+      public <P extends K2> A2<P, A1<F, A>, A1<F, A>> runOptic(
+          final A1<? extends Folding.Mu, P> dict, final A2<P, A, A> rel) {
+        final Folding<? extends Folding.Mu, P> folding = Folding.resolve(dict);
+        return folding.rphantom(folding.traverseP_(foldable, rel));
+      }
+    };
   }
 
   default <M> M foldMapOf(
@@ -84,7 +107,7 @@ public interface Fold<S, A> extends Optic<Folding.Mu, S, S, A, A> {
 
   default Fold<S, A> backwards() {
     final Fold<S, A> base = this;
-    return Fold.folding(
+    return Fold.traversing_(
         new Traversing.Wander<S, Unit, A, A>() {
           @Override
           public <F extends K1> A1<F, Unit> runWander(
